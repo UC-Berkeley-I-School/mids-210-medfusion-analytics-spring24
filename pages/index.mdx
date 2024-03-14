@@ -1,11 +1,109 @@
-# Introduction
- 
-Welcome to Nextra! This is a basic docs template. You can use it as a starting point for your own project :)
+---
+title: Medical Multi Modal Model
+searchable: false
+---
 
-## What is Nextra?
+import { Callout, Tabs } from 'nextra/components';
 
-A **simple**, **powerful** and **flexible** site generation framework with everything you love from Next.js.
+{/* wrapped with {} to mark it as javascript so mdx will not put it under a p tag */}
+{<h1 className="text-center font-extrabold md:text-5xl mt-8">Medical Multi Modal Model Capstone Project</h1>}
 
-## Documentation
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Metus dictum at tempor commodo ullamcorper. Magnis dis parturient montes nascetur ridiculus mus. Sapien et ligula ullamcorper malesuada. In cursus turpis massa tincidunt dui ut. Ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget egestas. Eget velit aliquet sagittis id consectetur purus ut faucibus. Id ornare arcu odio ut sem nulla pharetra diam. Aliquam malesuada bibendum arcu vitae elementum curabitur. Dui faucibus in ornare quam viverra orci. Tortor pretium viverra suspendisse potenti nullam ac. Orci a scelerisque purus semper eget duis at tellus at. Faucibus a pellentesque sit amet porttitor eget dolor morbi. Pulvinar mattis nunc sed blandit. Sed ullamcorper morbi tincidunt ornare massa eget egestas purus. Id porta nibh venenatis cras sed.
 
-The documentation is available at [https://nextra.site](https://nextra.site).
+Odio morbi quis commodo odio aenean sed adipiscing diam donec. Suspendisse in est ante in. Ornare suspendisse sed nisi lacus. Amet consectetur adipiscing elit ut aliquam purus sit amet. Luctus venenatis lectus magna fringilla urna porttitor rhoncus. Amet consectetur adipiscing elit pellentesque habitant morbi. Malesuada pellentesque elit eget gravida. Semper risus in hendrerit gravida rutrum. Quis hendrerit dolor magna eget est. Maecenas volutpat blandit aliquam etiam erat velit. Imperdiet dui accumsan sit amet. Amet nisl purus in mollis nunc. Ullamcorper sit amet risus nullam. Odio facilisis mauris sit amet massa vitae tortor. Condimentum lacinia quis vel eros donec ac odio tempor. Mauris pharetra et ultrices neque ornare aenean. Amet porttitor eget dolor morbi non arcu risus. Lorem ipsum dolor sit amet consectetur adipiscing elit ut.
+
+Molestie at elementum eu facilisis sed. Gravida rutrum quisque non tellus orci. Vitae sapien pellentesque habitant morbi tristique senectus et netus. Sed arcu non odio euismod lacinia at quis risus. Fermentum et sollicitudin ac orci phasellus egestas tellus rutrum. Ut lectus arcu bibendum at varius vel pharetra. Arcu bibendum at varius vel pharetra vel turpis nunc eget. Vel risus commodo viverra maecenas accumsan lacus vel facilisis volutpat. Velit dignissim sodales ut eu sem integer vitae justo eget. Et ligula ullamcorper malesuada proin libero nunc consequat.
+
+Quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus. Bibendum neque egestas congue quisque egestas diam in. Et odio pellentesque diam volutpat commodo sed. Viverra nam libero justo laoreet sit amet cursus sit amet. Ornare arcu dui vivamus arcu. Faucibus in ornare quam viverra orci sagittis eu volutpat odio. Facilisis gravida neque convallis a cras. Tempus imperdiet nulla malesuada pellentesque elit. Pretium quam vulputate dignissim suspendisse in est ante. Enim lobortis scelerisque fermentum dui faucibus in. Non nisi est sit amet facilisis magna etiam. Tempor commodo ullamcorper a lacus vestibulum sed. Nulla facilisi nullam vehicula ipsum a arcu cursus vitae. Pretium quam vulputate dignissim suspendisse in. Pretium lectus quam id leo in vitae. Urna condimentum mattis pellentesque id. Faucibus pulvinar elementum integer enim. Gravida arcu ac tortor dignissim. Id porta nibh venenatis cras sed felis eget. Vel pretium lectus quam id leo in.
+
+Varius quam quisque id diam. Molestie ac feugiat sed lectus vestibulum mattis. A diam maecenas sed enim ut sem viverra aliquet eget. Ultricies lacus sed turpis tincidunt. Mauris commodo quis imperdiet massa tincidunt nunc pulvinar sapien. Aliquam malesuada bibendum arcu vitae elementum curabitur vitae. Lacinia quis vel eros donec. Ornare aenean euismod elementum nisi quis eleifend quam. Massa eget egestas purus viverra accumsan in nisl nisi scelerisque. Ornare suspendisse sed nisi lacus sed viverra. Vitae turpis massa sed elementum tempus. Fames ac turpis egestas sed tempus urna et pharetra. Euismod elementum nisi quis eleifend. Enim lobortis scelerisque fermentum dui faucibus in ornare quam viverra. Adipiscing diam donec adipiscing tristique risus nec feugiat in. Faucibus nisl tincidunt eget nullam non. Mattis aliquam faucibus purus in massa. Cum sociis natoque penatibus et magnis dis parturient montes. Ultrices eros in cursus turpis. Id aliquet risus feugiat in ante metus dictum at.
+
+The name “SWR” is derived from `stale-while-revalidate`, a HTTP cache
+invalidation strategy popularized by
+[HTTP RFC 5861](https://tools.ietf.org/html/rfc5861). SWR is a strategy to first
+return the data from cache (stale), then send the fetch request (revalidate),
+and finally come with the up-to-date data.
+
+<Callout emoji="✅">
+  With SWR, components will get a stream of data updates **constantly** and
+  **automatically**.
+
+And the UI will be always **fast** and **reactive**.
+
+</Callout>
+
+<div className="mb-20 mt-16 text-center">
+  [Get Started](/docs/getting-started) · [Examples](/examples) · [Blog](/blog) · [GitHub
+  Repository](https://github.com/vercel/swr)
+</div>
+
+## Overview
+
+```jsx
+import useSWR from 'swr';
+
+function Profile() {
+  const { data, error } = useSWR('/api/user', fetcher);
+
+  if (error) return <div>failed to load</div>;
+  if (!data) return <div>loading...</div>;
+  return <div>hello {data.name}!</div>;
+}
+```
+
+```diff
+import useSWR from 'swr'
+
+function Profile() {
+  const { data, error } = useSWR('/api/user', fetcher)
+
+-  if (error) return <div>failed to load</div>
++  if (!data) return <div>loading...</div>
+  return <div>hello {data.name}!</div>
+}
+```
+
+In this example, the `useSWR` hook accepts a `key` string and a `fetcher`
+function. `key` is a unique identifier of the data (normally the API URL) and
+will be passed to `fetcher`. `fetcher` can be any asynchronous function which
+returns the data, you can use the native fetch or tools like Axios.
+
+The hook returns 2 values: `data` and `error`, based on the status of the
+request.
+
+## Features
+
+With just one single line of code, you can simplify the logic of data fetching
+in your project, and also have all these amazing features out-of-the-box:
+
+- **Fast**, **lightweight** and **reusable** data fetching
+- Built-in **cache** and request deduplication
+- **Real-time** experience
+- Transport and protocol agnostic
+- SSR / ISR / SSG support
+- TypeScript ready
+- React Native
+
+SWR has you covered in all aspects of speed, correctness, and stability to help
+you build better experiences:
+
+- Fast page navigation
+- Polling on interval
+- Data dependency
+- Revalidation on focus
+- Revalidation on network recovery
+- Local mutation (Optimistic UI)
+- Smart error retry
+- Pagination and scroll position recovery
+- React Suspense
+
+And a lot [more](/docs/getting-started).
+
+## Community
+
+SWR is created by the same team behind [Next.js](https://nextjs.org), the React
+framework. Follow [@vercel](https://twitter.com/vercel) on Twitter for future
+project updates.
+
+Feel free to join the
+[discussions on GitHub](https://github.com/vercel/swr/discussions)!

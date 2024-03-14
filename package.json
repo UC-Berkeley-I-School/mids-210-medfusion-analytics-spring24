@@ -1,7 +1,7 @@
 {
-  "name": "nextra-docs-template",
+  "name": "mids-210-medical-multi-modal-model-spring24",
   "version": "0.0.1",
-  "description": "Nextra docs template",
+  "description": "MIDS 210 Capstone Spring 2024 website for Medical Multi Modal Model (formerly the radiology triage team)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/shuding/nextra-docs-template.git"
   },
-  "author": "Shu Ding <g@shud.in>",
+  "author": "Steven Chang <stechang@berkeley.edu>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/shuding/nextra-docs-template/issues"
@@ -26,6 +26,9 @@
   },
   "devDependencies": {
     "@types/node": "18.11.10",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
     "typescript": "^4.9.3"
   }
 }

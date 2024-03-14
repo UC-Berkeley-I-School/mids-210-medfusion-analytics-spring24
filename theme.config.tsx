@@ -1,18 +1,27 @@
-import React from 'react'
-import { DocsThemeConfig } from 'nextra-theme-docs'
+import React from 'react';
+import { useRouter } from 'next/router';
+import { DocsThemeConfig } from 'nextra-theme-docs';
 
 const config: DocsThemeConfig = {
-  logo: <span>My Project</span>,
+  logo: <span>Medical Multi Modal Model</span>,
   project: {
     link: 'https://github.com/shuding/nextra-docs-template',
   },
-  chat: {
-    link: 'https://discord.com',
-  },
   docsRepositoryBase: 'https://github.com/shuding/nextra-docs-template',
   footer: {
-    text: 'Nextra Docs Template',
+    text: 'Medical Multi Modal Models Capstone Project - MIDS 210 Spring 2024',
   },
-}
+  useNextSeoProps: () => {
+    const { asPath } = useRouter();
+    if (asPath !== '/') {
+      return {
+        titleTemplate: '%s – Medical Multi Modal Model',
+      };
+    }
+  },
+  feedback: {
+    content: '',
+  },
+};
 
-export default config
+export default config;

@@ -1,0 +1,7 @@
+{
+    "tabular": "Tabular Model",
+    "text": "Text Model",
+    "image": "Image Model",
+    "early_fusion": "Early Fusion",
+    "late_fusion": "Late Fusion"
+}
