@@ -11,7 +11,7 @@ module.exports = {
   ...withNextra(),
   rewrites: undefined,
   output: 'export',
-  basePath: '',
+  basePath: '/mids-210-medical-multi-modal-model-spring24',
   images: {
     unoptimized: true,
   },
