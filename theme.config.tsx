@@ -7,7 +7,7 @@ const config: DocsThemeConfig = {
   project: {
     link: 'https://github.com/UC-Berkeley-I-School/mids-210-medical-multi-modal-model-spring24',
   },
-  docsRepositoryBase: 'https://github.com/UC-Berkeley-I-School/mids-210-medical-multi-modal-model-spring24',
+  docsRepositoryBase: 'https://github.com/UC-Berkeley-I-School/mids-210-medical-multi-modal-model-spring24/tree/main',
   footer: {
     text: 'Medical Multi Modal Models Capstone Project - MIDS 210 Spring 2024',
   },
