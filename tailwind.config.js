@@ -2,7 +2,7 @@
 module.exports = {
   darkMode: ['class'],
   content: ['./pages/**/*.{ts,tsx,mdx,md}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', '**/*.{ts,tsx}'],
-  prefix: 'tw-',
+  prefix: '',
   theme: {
     container: {
       center: true,
