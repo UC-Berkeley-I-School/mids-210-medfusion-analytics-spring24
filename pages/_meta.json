@@ -11,5 +11,9 @@
     "about": {
         "title": "About",
         "type": "page"
+    },
+    "test-onnx": {
+        "title": "Test ONNX",
+        "type": "page"
     }
 }
