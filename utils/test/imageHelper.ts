@@ -1,9 +1,8 @@
 import { Tensor } from 'onnxruntime-web';
 import * as _Jimp from 'jimp';
-import type { JimpConstructors } from '@jimp/core';
 
 // @ts-ignore
-const Jimp = ((typeof self !== 'undefined') ? (self.Jimp || _Jimp) : _Jimp) as JimpConstructors;
+const Jimp = ((typeof self !== 'undefined') ? (self.Jimp || _Jimp) : _Jimp);
 
 export async function getImageTensorFromPath(path: string, dims: number[] = [1, 3, 224, 224]): Promise<Tensor> {
   // 1. load the image  
