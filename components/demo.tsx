@@ -1,36 +1,174 @@
+'use client';
+
 import * as React from 'react';
 import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
-import { Label } from './ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
-import { Separator } from './ui/separator';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { InfoIcon } from 'lucide-react';
+import { Textarea } from './ui/textarea';
+
+const schema = z.object({
+  notes: z.string().min(100, 'The notes must be at least 100 characters long.'),
+  temperature: z.coerce.number().max(200).min(40),
+  heartrate: z.coerce.number().max(300).min(20),
+  resprate: z.coerce.number().max(300).min(0).positive(),
+  o2sat: z.coerce.number().max(100).min(0).positive(),
+  sbp: z.coerce.number().max(500).min(0).positive(),
+  dbp: z.coerce.number().max(500).min(0).positive(),
+  pain: z.coerce.number().int().max(10).min(0),
+});
 
 export function Demo() {
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      notes: '',
+      temperature: '' as unknown as number,
+      heartrate: '' as unknown as number,
+      resprate: '' as unknown as number,
+      o2sat: '' as unknown as number,
+      sbp: '' as unknown as number,
+      dbp: '' as unknown as number,
+      pain: '' as unknown as number,
+    },
+  });
+
+  // 2. Define a submit handler.
+  function onSubmit(values: z.infer<typeof schema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+  }
+
+  const tabularInput = ({
+    control,
+    fieldname,
+    name,
+    description,
+    placeholder,
+  }: {
+    control: typeof form.control;
+    fieldname: 'notes' | 'temperature' | 'heartrate' | 'resprate' | 'o2sat' | 'sbp' | 'dbp' | 'pain';
+    name: string;
+    description?: string;
+    placeholder: string;
+  }) => (
+    <FormField
+      control={control}
+      name={fieldname}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="flex gap-2 items-center">
+            {name}
+            {description && (
+              <Tooltip>
+                <TooltipTrigger className="inline-block">
+                  <InfoIcon size={16} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <FormDescription>{description}</FormDescription>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </FormLabel>
+          <FormControl>
+            <Input
+              placeholder={placeholder}
+              {...field}
+              type="number"
+              inputMode="decimal"
+              className="[appearance:textfield] w-24"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+
   return (
-    <>
+    <TooltipProvider delayDuration={0}>
       <Card className="w-auto">
         <CardHeader>
           <CardTitle>input form</CardTitle>
-          <CardDescription>Deploy your new project in one-click.</CardDescription>
+          <CardDescription>Analyze patient data</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="inputs" />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-2">
+                {tabularInput({
+                  control: form.control,
+                  fieldname: 'temperature',
+                  name: 'Temperature ºF',
+                  placeholder: '98.0',
+                })}
+                {tabularInput({
+                  control: form.control,
+                  fieldname: 'heartrate',
+                  name: 'Heart Rate (BPM)',
+                  placeholder: '98.0',
+                })}
+                {tabularInput({
+                  control: form.control,
+                  fieldname: 'resprate',
+                  name: 'Respiratory Rate (BPM)',
+                  description: "Patient's respiratory rate in breaths per minute",
+                  placeholder: '98.0',
+                })}
+                {tabularInput({
+                  control: form.control,
+                  fieldname: 'o2sat',
+                  name: 'O2 Saturation (%)',
+                  description: "Patient's oxygen saturation in percentage",
+                  placeholder: '98.0',
+                })}
+                {tabularInput({
+                  control: form.control,
+                  fieldname: 'sbp',
+                  name: 'Systolic Blood Pressure (mmHg)',
+                  description: "Patient's systolic blood pressure",
+                  placeholder: '98.0',
+                })}
+                {tabularInput({
+                  control: form.control,
+                  fieldname: 'dbp',
+                  name: 'Diastolic Blood Pressure (mmHg)',
+                  description: "Patient's diastolic blood pressure",
+                  placeholder: '98.0',
+                })}
+                {tabularInput({
+                  control: form.control,
+                  fieldname: 'pain',
+                  name: 'Pain (0-10)',
+                  description: "Patient's pain level from 0 to 10",
+                  placeholder: '5',
+                })}
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="framework">Framework</Label>
-                more inputs
-              </div>
-            </div>
-          </form>
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Patient notes</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="The patient entered with..." className="resize-none" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button type="submit">run</Button>
+            </form>
+          </Form>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button>Run</Button>
-        </CardFooter>
       </Card>
 
       <Card className="mt-2">
@@ -107,6 +245,6 @@ export function Demo() {
           </div>
         </CardContent>
       </Card>
-    </>
+    </TooltipProvider>
   );
 }
