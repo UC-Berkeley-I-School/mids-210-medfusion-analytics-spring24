@@ -13,18 +13,28 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { InfoIcon } from 'lucide-react';
 import { Textarea } from './ui/textarea';
 
-const schema = z.object({
-  notes: z.string().min(100, 'The notes must be at least 100 characters long.'),
-  temperature: z.coerce.number().max(200).min(40),
-  heartrate: z.coerce.number().max(300).min(20),
-  resprate: z.coerce.number().max(300).min(0).positive(),
-  o2sat: z.coerce.number().max(100).min(0).positive(),
-  sbp: z.coerce.number().max(500).min(0).positive(),
-  dbp: z.coerce.number().max(500).min(0).positive(),
-  pain: z.coerce.number().int().max(10).min(0),
-});
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 export function Demo() {
+  const schema = z.object({
+    notes: z.string().min(100, 'The notes must be at least 100 characters long.'),
+    temperature: z.coerce.number().max(200).min(40),
+    heartrate: z.coerce.number().max(300).min(20),
+    resprate: z.coerce.number().max(300).min(0).positive(),
+    o2sat: z.coerce.number().max(100).min(0).positive(),
+    sbp: z.coerce.number().max(500).min(0).positive(),
+    dbp: z.coerce.number().max(500).min(0).positive(),
+    pain: z.coerce.number().int().max(10).min(0),
+    acuity: z.coerce.number().int().max(5).min(1),
+    image: z
+      .instanceof(FileList)
+      .refine((file) => file?.length == 1, 'Image is required.')
+      .refine(
+        (file) => ACCEPTED_IMAGE_TYPES.includes(file[0]?.type),
+        'Only .jpg, .jpeg, .png and .webp formats are supported.'
+      ),
+  });
+
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -36,8 +46,11 @@ export function Demo() {
       sbp: '' as unknown as number,
       dbp: '' as unknown as number,
       pain: '' as unknown as number,
+      acuity: '' as unknown as number,
     },
   });
+
+  const fileRef = form.register('image');
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof schema>) {
@@ -54,7 +67,7 @@ export function Demo() {
     placeholder,
   }: {
     control: typeof form.control;
-    fieldname: 'notes' | 'temperature' | 'heartrate' | 'resprate' | 'o2sat' | 'sbp' | 'dbp' | 'pain';
+    fieldname: 'notes' | 'temperature' | 'heartrate' | 'resprate' | 'o2sat' | 'sbp' | 'dbp' | 'pain' | 'acuity';
     name: string;
     description?: string;
     placeholder: string;
@@ -150,6 +163,13 @@ export function Demo() {
                   description: "Patient's pain level from 0 to 10",
                   placeholder: '5',
                 })}
+                {tabularInput({
+                  control: form.control,
+                  fieldname: 'acuity',
+                  name: 'Acuity (1-5)',
+                  description: "Patient's acuity level from 1 to 5",
+                  placeholder: '3',
+                })}
               </div>
               <FormField
                 control={form.control}
@@ -164,7 +184,19 @@ export function Demo() {
                   </FormItem>
                 )}
               />
-
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Chest xray image</FormLabel>
+                    <FormControl>
+                      <Input className="resize-none" type="file" {...fileRef} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit">run</Button>
             </form>
           </Form>
