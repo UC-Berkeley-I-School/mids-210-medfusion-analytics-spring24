@@ -27,7 +27,7 @@ export function Demo() {
     pain: z.coerce.number().int().max(10).min(0),
     acuity: z.coerce.number().int().max(5).min(1),
     image: z
-      .instanceof(FileList)
+      .any()
       .refine((file) => file?.length == 1, 'Image is required.')
       .refine(
         (file) => ACCEPTED_IMAGE_TYPES.includes(file[0]?.type),
