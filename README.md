@@ -12,9 +12,9 @@ Website code for UC Berkeley MIDS Medical Multi Modal Models Capstone Project Sp
 
 [Models Repo](https://github.com/UC-Berkeley-I-School/mids-210-radiology-triage-models-spring24)
 
-This is a template for creating documentation with [Nextra](https://nextra.site).
+Supports the [Commonmark markdown standard](https://commonmark.org/help/)
 
-[**Live Demo →**](https://nextra-docs-template.vercel.app)
+This is a template for creating documentation with [Nextra](https://nextra.site).
 
 [![](.github/screenshot.png)](https://nextra-docs-template.vercel.app)
 
@@ -22,7 +22,7 @@ This is a template for creating documentation with [Nextra](https://nextra.site)
 
 First, run `npm i` to install the dependencies.
 
-Then, run `npm dev` to start the development server and visit localhost:3000.
+Then, run `npm run dev` to start the development server and visit localhost:3000.
 
 ## License
 
