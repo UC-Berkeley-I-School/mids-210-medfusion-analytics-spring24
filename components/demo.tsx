@@ -18,12 +18,12 @@ const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/web
 export function Demo() {
   const schema = z.object({
     notes: z.string().min(100, 'The notes must be at least 100 characters long.'),
-    temperature: z.coerce.number().max(200).min(40),
-    heartrate: z.coerce.number().max(300).min(20),
-    resprate: z.coerce.number().max(300).min(0).positive(),
-    o2sat: z.coerce.number().max(100).min(0).positive(),
-    sbp: z.coerce.number().max(500).min(0).positive(),
-    dbp: z.coerce.number().max(500).min(0).positive(),
+    temperature: z.coerce.number().max(120).min(50, 'Temperature input in Fahrenheit.'),
+    heartrate: z.coerce.number().max(500).min(20),
+    resprate: z.coerce.number().max(200).min(0).positive(),
+    o2sat: z.coerce.number().max(100).min(70),
+    sbp: z.coerce.number().max(400).min(40),
+    dbp: z.coerce.number().max(400).min(10),
     pain: z.coerce.number().int().max(10).min(0),
     acuity: z.coerce.number().int().max(5).min(1),
     image: z
@@ -139,7 +139,7 @@ export function Demo() {
                   control: form.control,
                   fieldname: 'o2sat',
                   name: 'O2 Saturation (%)',
-                  description: "Patient's oxygen saturation in percentage",
+                  description: "Patient's oxygen saturation in percentage (peripheral)",
                   placeholder: '98.0',
                 })}
                 {tabularInput({
