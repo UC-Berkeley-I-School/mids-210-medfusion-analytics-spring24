@@ -3,10 +3,5 @@
   "background": "Background Information",
   "data": "Data & Preprocessing",
   "models": "Models",
-  "contact": {
-    "title": "Contact ↗",
-    "type": "page",
-    "href": "https://twitter.com/shuding_",
-    "newWindow": true
-  }
+  "infra": "Infrastructure"
 }

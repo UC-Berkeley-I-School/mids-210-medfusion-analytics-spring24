@@ -1,7 +1,9 @@
 ---
-title: 'Text Models'
+title: 'Text Model'
 ---
 
-# Text Models
+# Text Model
 
-This page provides documentation for text models.
+The text model is text classification model designed to process clinician notes and predict the presence of a specific condition. The model is trained on the MIMIC-IV dataset, specifically the notes section regarding the patient's history of present illness. The model itself is a BERT-based model, extending the pretrained model [Bio ClinicalBERT](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT) with a classification layer.
+
+![example image](/images/nlp_diagram.svg)
