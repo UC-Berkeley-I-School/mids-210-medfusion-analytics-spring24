@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useState } from 'react';
 import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -12,10 +13,16 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { InfoIcon } from 'lucide-react';
 import { Textarea } from './ui/textarea';
+import { Spinner } from './ui/spinner';
+import { inferenceBioclinicalBert } from '@/utils/predict';
+import { presets } from '@/data/classification-map';
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 export function Demo() {
+  const [text, setText] = useState<string>('');
+  const [textLoading, setTextLoading] = useState<boolean>(false);
+
   const schema = z.object({
     notes: z.string().min(100, 'The notes must be at least 100 characters long.'),
     temperature: z.coerce.number().max(120).min(50, 'Temperature input in Fahrenheit.'),
@@ -58,6 +65,26 @@ export function Demo() {
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
+
+  const loadPreset = (index: number) => {
+    const preset = presets[index];
+    form.setValue('notes', preset.history_of_major_illness);
+  };
+
+  const runTextOnly = () => {
+    setTextLoading(true);
+    setText('Running inference...');
+    setTimeout(() => {
+      const input = form.getValues('notes');
+      console.log(input);
+      // inference is a heavy load and may take a while, even if pulling from cache
+      // move it out of the main thread
+      inferenceBioclinicalBert(form.getValues('notes')).then(([inferenceResult, inferenceTime]) => {
+        setText(inferenceTime + ' secs \n' + JSON.stringify(inferenceResult, undefined, 2));
+        setTextLoading(false);
+      });
+    });
+  };
 
   const tabularInput = ({
     control,
@@ -111,6 +138,12 @@ export function Demo() {
         <CardHeader>
           <CardTitle>input form</CardTitle>
           <CardDescription>Analyze patient data</CardDescription>
+          <CardDescription>
+            Load preset:
+            <Button variant="ghost" onClick={() => loadPreset(0)}>
+              A
+            </Button>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -197,7 +230,12 @@ export function Demo() {
                   </FormItem>
                 )}
               />
-              <Button type="submit">run</Button>
+              <div className="flex gap-2">
+                <Button type="submit">run</Button>
+                <Button type="button" onClick={runTextOnly}>
+                  Run Text Only
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>
@@ -230,9 +268,11 @@ export function Demo() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut aliquam optio neque officiis?
-                Exercitationem, doloribus explicabo quasi nihil sit dolore est. Inventore, ad? Maiores itaque dolorum
-                et. Deserunt, eius soluta.
+                {textLoading && <Spinner />}
+                <pre>{text}</pre>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Optio fuga quod mollitia ad fugit deleniti,
+                aspernatur minus, eius officia beatae iusto itaque alias velit nobis distinctio quibusdam explicabo
+                voluptatibus rerum.
               </div>
             </CardContent>
           </TabsContent>

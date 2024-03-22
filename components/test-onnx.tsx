@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { IMAGE_URLS } from '@/data/sample-image-urls';
-import { inferenceSqueezenet } from '@/utils/test/predict';
+import { inferenceSqueezenet } from '@/utils/predict';
 import styles from './test-onnx.module.css';
 
 interface Props {
