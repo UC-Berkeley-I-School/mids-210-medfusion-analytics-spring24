@@ -2,6 +2,6 @@
   "index": "Introduction",
   "background": "Background Information",
   "data": "Data & Preprocessing",
-  "infra": "Infrastructure",
-  "models": "Models"
+  "models": "Models",
+  "infra": "Infrastructure"
 }

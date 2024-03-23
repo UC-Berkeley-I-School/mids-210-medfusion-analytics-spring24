@@ -211,7 +211,7 @@ export function Demo() {
                   <FormItem>
                     <FormLabel>Patient notes</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="The patient entered with..." className="resize-none" {...field} />
+                      <Textarea placeholder="The patient entered with..." className="resize-y" rows={4} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

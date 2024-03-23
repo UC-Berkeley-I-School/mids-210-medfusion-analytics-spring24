@@ -1,15 +1,15 @@
 {
-    "index": {
-        "title": "Introduction",
-        "type": "page",
-        "display": "hidden"
-    },
-    "docs": {
-        "type": "page",
-        "title": "Documentation"
-    },
-    "about": {
-        "title": "About",
-        "type": "page"
-    }
+  "index": {
+    "title": "Introduction",
+    "type": "page",
+    "display": "hidden"
+  },
+  "docs": {
+    "type": "page",
+    "title": "Documentation"
+  },
+  "about": {
+    "title": "About",
+    "type": "page"
+  }
 }
