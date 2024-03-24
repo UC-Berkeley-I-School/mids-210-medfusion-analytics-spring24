@@ -37,6 +37,19 @@ module.exports = withNextra({
             from: './model',
             to: 'static/chunks/pages',
           },
+          // for web worker
+          {
+            from: './node_modules/onnxruntime-web/dist/ort-wasm.wasm',
+            to: 'static/chunks',
+          },
+          {
+            from: './node_modules/onnxruntime-web/dist/ort-wasm-simd.wasm',
+            to: 'static/chunks',
+          },
+          {
+            from: './model/onnx',
+            to: 'static/chunks',
+          },
         ],
       })
     );

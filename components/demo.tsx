@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -14,14 +14,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { InfoIcon } from 'lucide-react';
 import { Textarea } from './ui/textarea';
 import { Spinner } from './ui/spinner';
-import { inferenceBioclinicalBert } from '@/utils/predict';
 import { presets } from '@/data/classification-map';
+import { sendMessage } from '@/model/sender';
+import { ModelWebWorkerReceiveMessage, ModelWebWorkerSendMessage } from '@/model/worker-types';
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 export function Demo() {
   const [text, setText] = useState<string>('');
   const [textLoading, setTextLoading] = useState<boolean>(false);
+
+  const worker = useRef<Worker | null>(null);
 
   const schema = z.object({
     notes: z.string().min(100, 'The notes must be at least 100 characters long.'),
@@ -59,6 +62,52 @@ export function Demo() {
 
   const fileRef = form.register('image');
 
+  useEffect(() => {
+    if (!worker.current) {
+      worker.current = new Worker(new URL('@/model/worker.ts', import.meta.url), { type: 'module' });
+    }
+
+    const onMessageReceived = (event: MessageEvent<ModelWebWorkerReceiveMessage>) => {
+      console.log('message recieved from work: ', event);
+      switch (event.data.model) {
+        case 'text':
+          textInferenceMessageProcessor(event);
+          break;
+        default:
+          break;
+      }
+    };
+    worker.current.addEventListener('message', onMessageReceived);
+
+    return () => worker.current?.removeEventListener('message', onMessageReceived);
+  });
+
+  const textInferenceMessageProcessor = (event: MessageEvent<ModelWebWorkerReceiveMessage>) => {
+    const { type, payload } = event.data;
+    switch (type) {
+      case 'update':
+        setText(payload);
+        break;
+      case 'inference':
+        setTextLoading(false);
+        setText(JSON.stringify(payload, null, 2));
+        break;
+      case 'error':
+        setTextLoading(false);
+        console.error(payload);
+        setText('error occurred: ' + payload.message);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const runWorker = useCallback((val: ModelWebWorkerSendMessage) => {
+    if (worker.current) {
+      sendMessage(worker.current, val);
+    }
+  }, []);
+
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof schema>) {
     // Do something with the form values.
@@ -74,16 +123,7 @@ export function Demo() {
   const runTextOnly = () => {
     setTextLoading(true);
     setText('Running inference...');
-    setTimeout(() => {
-      const input = form.getValues('notes');
-      console.log(input);
-      // inference is a heavy load and may take a while, even if pulling from cache
-      // move it out of the main thread
-      inferenceBioclinicalBert(form.getValues('notes')).then(([inferenceResult, inferenceTime]) => {
-        setText(inferenceTime + ' secs \n' + JSON.stringify(inferenceResult, undefined, 2));
-        setTextLoading(false);
-      });
-    });
+    runWorker({ type: 'textOnly', payload: form.getValues('notes') });
   };
 
   const tabularInput = ({
