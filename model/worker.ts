@@ -8,6 +8,10 @@ import { classificationMap } from '@/data/classification-map';
 
 console.log('webworker initialized');
 
+const isIOS = typeof navigator !== 'undefined' && /iP(hone|od|ad)/.test(navigator.userAgent);
+if (isIOS) {
+  ort.env.wasm.numThreads = 1;
+}
 class TokenizerSingleton {
   private static instance: BertTokenizer;
   private constructor() {
