@@ -18,6 +18,7 @@ import { InferenceDatum, categoryToName, presets } from '@/data/classification-m
 import { sendMessage } from '@/model/sender';
 import { ModelWebWorkerReceiveMessage, ModelWebWorkerSendMessage } from '@/model/worker-types';
 import Chart from './chart';
+import { sort } from 'd3-array';
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
@@ -116,7 +117,7 @@ export function Demo() {
   }, []);
 
   const getValuesSorted = (d: InferenceDatum[]) => {
-    return d.toSorted((a, b) => b.probability - a.probability);
+    return sort(d, (a, b) => b.probability - a.probability);
   };
 
   // 2. Define a submit handler.
