@@ -14,14 +14,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { InfoIcon } from 'lucide-react';
 import { Textarea } from './ui/textarea';
 import { Spinner } from './ui/spinner';
-import { presets } from '@/data/classification-map';
+import { InferenceDatum, presets } from '@/data/classification-map';
 import { sendMessage } from '@/model/sender';
 import { ModelWebWorkerReceiveMessage, ModelWebWorkerSendMessage } from '@/model/worker-types';
+import Chart from './chart';
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 export function Demo() {
   const [text, setText] = useState<string>('');
+  const [textTime, setTextTime] = useState<number>(0);
+  const [textInference, setTextInference] = useState<InferenceDatum[]>();
   const [textLoading, setTextLoading] = useState<boolean>(false);
 
   const worker = useRef<Worker | null>(null);
@@ -90,7 +93,9 @@ export function Demo() {
         break;
       case 'inference':
         setTextLoading(false);
-        setText(JSON.stringify(payload, null, 2));
+        setText('');
+        setTextTime(payload.inferenceTime);
+        setTextInference(payload.results);
         break;
       case 'error':
         setTextLoading(false);
@@ -122,6 +127,8 @@ export function Demo() {
 
   const runTextOnly = () => {
     setTextLoading(true);
+    setTextTime(0);
+    setTextInference(undefined);
     setText('Running inference...');
     runWorker({ type: 'textOnly', payload: form.getValues('notes') });
   };
@@ -309,10 +316,10 @@ export function Demo() {
             <CardContent className="space-y-2">
               <div className="space-y-1">
                 {textLoading && <Spinner />}
-                <pre>{text}</pre>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Optio fuga quod mollitia ad fugit deleniti,
-                aspernatur minus, eius officia beatae iusto itaque alias velit nobis distinctio quibusdam explicabo
-                voluptatibus rerum.
+                {text && <div className="mx-auto block w-max">{text}</div>}
+                {textTime > 0 && <div className="text-sm">Time taken: {textTime}s</div>}
+                {textInference && <Chart data={textInference} type="probability" />}
+                {textInference && <Chart data={textInference} type="odds_ratio" />}
               </div>
             </CardContent>
           </TabsContent>
@@ -333,21 +340,8 @@ export function Demo() {
       </Card>
       <Card className="mt-2">
         <CardHeader>
-          <CardTitle>Late Fusion Inference</CardTitle>
+          <CardTitle>Fusion Inference</CardTitle>
           <CardDescription>Inference results of the late fusion model.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <div className="space-y-1">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut aliquam optio neque officiis? Exercitationem,
-            doloribus explicabo quasi nihil sit dolore est. Inventore, ad? Maiores itaque dolorum et. Deserunt, eius
-            soluta.
-          </div>
-        </CardContent>
-      </Card>
-      <Card className="mt-2">
-        <CardHeader>
-          <CardTitle>Early Fusion Inference</CardTitle>
-          <CardDescription>Inference results of the early fusion model.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="space-y-1">
