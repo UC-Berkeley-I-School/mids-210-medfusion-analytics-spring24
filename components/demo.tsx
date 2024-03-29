@@ -200,55 +200,55 @@ export function Demo() {
                   control: form.control,
                   fieldname: 'temperature',
                   name: 'Temperature ºF',
-                  placeholder: '98.0',
+                  placeholder: '98.5',
                 })}
                 {tabularInput({
                   control: form.control,
                   fieldname: 'heartrate',
                   name: 'Heart Rate (BPM)',
-                  placeholder: '98.0',
+                  placeholder: '85',
                 })}
                 {tabularInput({
                   control: form.control,
                   fieldname: 'resprate',
                   name: 'Respiratory Rate (BPM)',
                   description: "Patient's respiratory rate in breaths per minute",
-                  placeholder: '98.0',
+                  placeholder: '18',
                 })}
                 {tabularInput({
                   control: form.control,
                   fieldname: 'o2sat',
                   name: 'O2 Saturation (%)',
                   description: "Patient's oxygen saturation in percentage (peripheral)",
-                  placeholder: '98.0',
+                  placeholder: '98',
                 })}
                 {tabularInput({
                   control: form.control,
                   fieldname: 'sbp',
                   name: 'Systolic Blood Pressure (mmHg)',
                   description: "Patient's systolic blood pressure",
-                  placeholder: '98.0',
+                  placeholder: '132',
                 })}
                 {tabularInput({
                   control: form.control,
                   fieldname: 'dbp',
                   name: 'Diastolic Blood Pressure (mmHg)',
                   description: "Patient's diastolic blood pressure",
-                  placeholder: '98.0',
+                  placeholder: '73',
                 })}
                 {tabularInput({
                   control: form.control,
                   fieldname: 'pain',
                   name: 'Pain (0-10)',
                   description: "Patient's pain level from 0 to 10",
-                  placeholder: '5',
+                  placeholder: '0',
                 })}
                 {tabularInput({
                   control: form.control,
                   fieldname: 'acuity',
                   name: 'Acuity (1-5)',
                   description: "Patient's acuity level from 1 to 5",
-                  placeholder: '3',
+                  placeholder: '2',
                 })}
               </div>
               <FormField
