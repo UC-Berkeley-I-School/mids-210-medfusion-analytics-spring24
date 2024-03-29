@@ -14,7 +14,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { InfoIcon } from 'lucide-react';
 import { Textarea } from './ui/textarea';
 import { Spinner } from './ui/spinner';
-import { InferenceDatum, presets } from '@/data/classification-map';
+import { InferenceDatum, categoryToName, presets } from '@/data/classification-map';
 import { sendMessage } from '@/model/sender';
 import { ModelWebWorkerReceiveMessage, ModelWebWorkerSendMessage } from '@/model/worker-types';
 import Chart from './chart';
@@ -25,6 +25,7 @@ export function Demo() {
   const [text, setText] = useState<string>('');
   const [textTime, setTextTime] = useState<number>(0);
   const [textInference, setTextInference] = useState<InferenceDatum[]>();
+  const [textInferenceSorted, setTextInferenceSorted] = useState<InferenceDatum[]>();
   const [textLoading, setTextLoading] = useState<boolean>(false);
 
   const worker = useRef<Worker | null>(null);
@@ -96,6 +97,7 @@ export function Demo() {
         setText('');
         setTextTime(payload.inferenceTime);
         setTextInference(payload.results);
+        setTextInferenceSorted(getValuesSorted(payload.results));
         break;
       case 'error':
         setTextLoading(false);
@@ -112,6 +114,10 @@ export function Demo() {
       sendMessage(worker.current, val);
     }
   }, []);
+
+  const getValuesSorted = (d: InferenceDatum[]) => {
+    return d.toSorted((a, b) => b.probability - a.probability);
+  };
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof schema>) {
@@ -318,6 +324,19 @@ export function Demo() {
                 {textLoading && <Spinner />}
                 {text && <div className="mx-auto block w-max">{text}</div>}
                 {textTime > 0 && <div className="text-sm">Time taken: {textTime}s</div>}
+                {textInferenceSorted && (
+                  <p>
+                    The model predicts that among the possible findings, the patient has &quot;
+                    {categoryToName[textInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                    {(textInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
+                    follows:{' '}
+                    {textInferenceSorted
+                      .slice(1)
+                      .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
+                      .join(', ')}
+                  </p>
+                )}
+                <br />
                 {textInference && <Chart data={textInference} type="probability" />}
                 {textInference && <Chart data={textInference} type="odds_ratio" />}
               </div>
