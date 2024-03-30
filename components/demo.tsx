@@ -90,6 +90,8 @@ export function Demo() {
         case 'text':
           textInferenceMessageProcessor(event);
           break;
+        case 'image':
+          imageInferenceMessageProcessor(event);
         default:
           break;
       }
@@ -103,14 +105,7 @@ export function Demo() {
     const { type, payload, model } = event.data;
     switch (type) {
       case 'update':
-        switch (model) {
-          case 'text':
-            setTextMsg(payload);
-            break;
-          case 'image':
-            setImageMsg(payload);
-            break;
-        }
+        setTextMsg(payload);
         break;
       case 'textInference':
         setTextLoading(false);
@@ -123,6 +118,29 @@ export function Demo() {
         setTextLoading(false);
         console.error(payload);
         setTextMsg('error occurred: ' + payload.message);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const imageInferenceMessageProcessor = (event: MessageEvent<ModelWebWorkerReceiveMessage>) => {
+    const { type, payload, model } = event.data;
+    switch (type) {
+      case 'update':
+        setImageMsg(payload);
+        break;
+      case 'imageInference':
+        setImageLoading(false);
+        setImageMsg('');
+        setImageTime(payload.inferenceTime);
+        setImageInference(payload.results);
+        setImageInferenceSorted(getValuesSorted(payload.results));
+        break;
+      case 'error':
+        setImageLoading(false);
+        console.error(payload);
+        setImageMsg('error occurred: ' + payload.message);
         break;
       default:
         break;
@@ -407,9 +425,24 @@ export function Demo() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut aliquam optio neque officiis?
-                Exercitationem, doloribus explicabo quasi nihil sit dolore est. Inventore, ad? Maiores itaque dolorum
-                et. Deserunt, eius soluta.
+                {imageLoading && <Spinner />}
+                {imageMsg && <div className="mx-auto block w-max">{imageMsg}</div>}
+                {imageTime > 0 && <div className="text-sm">Time taken: {imageTime}s</div>}
+                {imageInferenceSorted && (
+                  <p>
+                    The model predicts that among the possible findings, the patient has &quot;
+                    {categoryToName[imageInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                    {(imageInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
+                    follows:{' '}
+                    {imageInferenceSorted
+                      .slice(1)
+                      .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
+                      .join(', ')}
+                  </p>
+                )}
+                <br />
+                {imageInference && <Chart data={imageInference} type="probability" />}
+                {imageInference && <Chart data={imageInference} type="odds_ratio" />}
               </div>
             </CardContent>
           </TabsContent>

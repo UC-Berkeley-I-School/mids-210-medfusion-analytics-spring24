@@ -3,4 +3,4 @@ const RELEASE_VERSION = "v0.0.1-alpha/";
 
 // export const NLP_MODEL_URL = "./bioclinicalbert_nlp_cls_best_fp16.onnx";
 export const NLP_MODEL_URL = "https://mids-210-medical-multi-modal-models.s3.us-west-2.amazonaws.com/bioclinicalbert_nlp_cls_best_fp16.onnx";
-export const IMAGE_MODEL_URL = "./EfficientNet-B3_model.onnx";
+export const IMAGE_MODEL_URL = "./EfficientNet-B3_Model.onnx";

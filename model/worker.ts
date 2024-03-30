@@ -3,7 +3,7 @@ import { BertTokenizer, ImageFeatureExtractor, RawImage, softmax } from '@xenova
 import tokenizerJSON from '@/model/bio_clinical_bert_tokenizer/tokenizer.json';
 import tokenizerConfig from '@/model/bio_clinical_bert_tokenizer/tokenizer_config.json';
 import { ModelWebWorkerSendMessage } from './worker-types';
-import { NLP_MODEL_URL } from '@/utils/constants';
+import { IMAGE_MODEL_URL, NLP_MODEL_URL } from '@/utils/constants';
 import { textClassificationMap } from '@/data/classification-map';
 
 console.log('webworker initialized');
@@ -95,12 +95,12 @@ const runTextClassificationInference = async (input: string) => {
   self.postMessage({ type: 'textInference', model: 'text', payload: { results, inferenceTime } });
 };
 
-async function imagePreprocessor(url: string | URL): Promise<ort.Tensor> {
+async function imagePreprocessor(url: string | URL) {
   const image = await RawImage.fromURL(url);
   const preprocessor = new ImageFeatureExtractor({
     image_mean: [0.485, 0.456, 0.406],
     image_std: [0.229, 0.224, 0.225],
-    do_rescale: false,
+    do_rescale: true,
     rescale_factor: 1 / 255,
     do_normalize: true,
     do_resize: true,
@@ -110,14 +110,39 @@ async function imagePreprocessor(url: string | URL): Promise<ort.Tensor> {
       height: 256,
     },
   });
-  const res = await preprocessor.preprocess(image, { do_normalize: true, do_convert_rgb: true });
-  return res.pixel_values as unknown as ort.Tensor;
+  const res = await preprocessor([image]);
+  return res.pixel_values;
 }
 
 const runImageClassificationInference = async (input: string) => {
   self.postMessage({ type: 'update', model: 'image', payload: 'Preprocessing Image' });
   const val = await imagePreprocessor(input);
-  console.log(val.data);
+  const tensor = new ort.Tensor(val.type, val.data as any, val.dims);
+  console.log(tensor);
+
+  let session: ort.InferenceSession;
+  try {
+    self.postMessage({ type: 'update', model: 'image', payload: 'Creating inference session' });
+    session = await InferenceSessionSingleton.getInstance(IMAGE_MODEL_URL);
+  } catch (error) {
+    console.error(error);
+    self.postMessage({ type: 'error', model: 'image', payload: error });
+    return;
+  }
+  self.postMessage({ type: 'update', model: 'image', payload: 'Running inference' });
+  const start = performance.now();
+  const feeds: Record<string, ort.Tensor> = {};
+  feeds[session.inputNames[0]] = new ort.Tensor(val.type, val.data as any, val.dims);
+  const outputData = await session.run(feeds);
+  const end = performance.now();
+  console.log(outputData);
+  const output = outputData[session.outputNames[0]];
+  const inferenceTime = (end - start) / 1000;
+  const outputSoftmax = softmax(Array.prototype.slice.call(output.data));
+  console.log('outputSoftmax: ', outputSoftmax);
+  const results = await classificationClasses(outputSoftmax, output);
+
+  self.postMessage({ type: 'imageInference', model: 'image', payload: { results, inferenceTime } });
 };
 
 self.addEventListener('message', (event: MessageEvent<ModelWebWorkerSendMessage>) => {
