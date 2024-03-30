@@ -2,7 +2,7 @@
 
 Website code for UC Berkeley MIDS Medical Multi Modal Models Capstone Project Spring 2024 (formerly known as Radiology Triage Team).
 
-[https://uc-berkeley-i-school.github.io/mids-210-medical-multi-modal-model-spring24/](https://uc-berkeley-i-school.github.io/mids-210-medical-multi-modal-model-spring24/)
+[https://uc-berkeley-i-school.github.io/mids-210-medfusion-analytics-spring24/](https://uc-berkeley-i-school.github.io/mids-210-medfusion-analytics-spring24/)
 
 > UC Berkeley
 >
@@ -10,7 +10,7 @@ Website code for UC Berkeley MIDS Medical Multi Modal Models Capstone Project Sp
 >
 > Authors: A Adam Saleh, Carolyn Dunlap, Cinthya Rosales, Esteban Valenzuela, Lee Gary, Steven Chang
 
-[Models Repo](https://github.com/UC-Berkeley-I-School/mids-210-radiology-triage-models-spring24)
+[Models Repo](https://github.com/UC-Berkeley-I-School/mids-210-medfusion-analytics-spring24)
 
 Supports the [Commonmark markdown standard](https://commonmark.org/help/)
 

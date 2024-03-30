@@ -1,7 +1,7 @@
 {
-  "name": "mids-210-medical-multi-modal-model-spring24",
+  "name": "mids-210-medfusion-analytics-spring24",
   "version": "0.0.1",
-  "description": "MIDS 210 Capstone Spring 2024 website for Medical Multi Modal Model (formerly the radiology triage team)",
+  "description": "MIDS 210 Capstone Spring 2024 website for MedFusion Analytics (formerly the radiology triage team)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

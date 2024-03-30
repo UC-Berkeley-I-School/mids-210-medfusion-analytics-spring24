@@ -19,18 +19,25 @@ import { sendMessage } from '@/model/sender';
 import { ModelWebWorkerReceiveMessage, ModelWebWorkerSendMessage } from '@/model/worker-types';
 import Chart from './chart';
 import { sort } from 'd3-array';
+import Image from 'next/image';
 
-const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
 export function Demo() {
-  const [text, setText] = useState<string>('');
+  const [textMsg, setTextMsg] = useState<string>('');
   const [textTime, setTextTime] = useState<number>(0);
   const [textInference, setTextInference] = useState<InferenceDatum[]>();
   const [textInferenceSorted, setTextInferenceSorted] = useState<InferenceDatum[]>();
   const [textLoading, setTextLoading] = useState<boolean>(false);
 
-  const worker = useRef<Worker | null>(null);
+  const [imageMsg, setImageMsg] = useState<string>('');
+  const [imageTime, setImageTime] = useState<number>(0);
+  const [imageInference, setImageInference] = useState<InferenceDatum[]>();
+  const [imageInferenceSorted, setImageInferenceSorted] = useState<InferenceDatum[]>();
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
 
+  const worker = useRef<Worker | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | URL>();
   const schema = z.object({
     notes: z.string().min(100, 'The notes must be at least 100 characters long.'),
     temperature: z.coerce.number().max(120).min(50, 'Temperature input in Fahrenheit.'),
@@ -46,7 +53,7 @@ export function Demo() {
       .refine((file) => file?.length == 1, 'Image is required.')
       .refine(
         (file) => ACCEPTED_IMAGE_TYPES.includes(file[0]?.type),
-        'Only .jpg, .jpeg, .png and .webp formats are supported.'
+        'Only .jpg, .jpeg and .png formats are supported.'
       ),
   });
 
@@ -66,6 +73,11 @@ export function Demo() {
   });
 
   const fileRef = form.register('image');
+  fileRef.onChange = async (e) => {
+    console.log(e);
+    const url = URL.createObjectURL(e.target.files?.[0]);
+    setSelectedImage(url);
+  };
 
   useEffect(() => {
     if (!worker.current) {
@@ -88,14 +100,21 @@ export function Demo() {
   });
 
   const textInferenceMessageProcessor = (event: MessageEvent<ModelWebWorkerReceiveMessage>) => {
-    const { type, payload } = event.data;
+    const { type, payload, model } = event.data;
     switch (type) {
       case 'update':
-        setText(payload);
+        switch (model) {
+          case 'text':
+            setTextMsg(payload);
+            break;
+          case 'image':
+            setImageMsg(payload);
+            break;
+        }
         break;
-      case 'inference':
+      case 'textInference':
         setTextLoading(false);
-        setText('');
+        setTextMsg('');
         setTextTime(payload.inferenceTime);
         setTextInference(payload.results);
         setTextInferenceSorted(getValuesSorted(payload.results));
@@ -103,7 +122,7 @@ export function Demo() {
       case 'error':
         setTextLoading(false);
         console.error(payload);
-        setText('error occurred: ' + payload.message);
+        setTextMsg('error occurred: ' + payload.message);
         break;
       default:
         break;
@@ -127,17 +146,42 @@ export function Demo() {
     console.log(values);
   }
 
-  const loadPreset = (index: number) => {
+  const loadPreset = async (index: number) => {
     const preset = presets[index];
-    form.setValue('notes', preset.history_of_major_illness);
+    form.setValue('temperature', preset.temperature);
+    form.setValue('heartrate', preset.heartrate);
+    form.setValue('resprate', preset.resprate);
+    form.setValue('o2sat', preset.o2sat);
+    form.setValue('sbp', preset.sbp);
+    form.setValue('dbp', preset.dbp);
+    form.setValue('pain', preset.pain);
+    form.setValue('acuity', preset.acuity);
+    form.setValue('notes', preset.history_of_present_illness);
+    const response = await fetch(preset.image_min_res);
+    const data = await response.blob();
+    const metadata = response.headers.get('content-type') || 'image/jpeg';
+    const image = new File([data], 'preset.jpg', { type: metadata });
+    form.setValue('image', [image]);
+    setSelectedImage(preset.image_min_res);
   };
 
   const runTextOnly = () => {
     setTextLoading(true);
     setTextTime(0);
     setTextInference(undefined);
-    setText('Running inference...');
+    setTextMsg('Running inference...');
     runWorker({ type: 'textOnly', payload: form.getValues('notes') });
+  };
+
+  const runImageOnly = () => {
+    if (!selectedImage) {
+      return;
+    }
+    setImageLoading(true);
+    setImageTime(0);
+    setImageInference(undefined);
+    setImageMsg('Running inference...');
+    runWorker({ type: 'imageOnly', payload: selectedImage });
   };
 
   const tabularInput = ({
@@ -281,6 +325,16 @@ export function Demo() {
                       <Input className="resize-none" type="file" {...fileRef} />
                     </FormControl>
                     <FormMessage />
+                    {selectedImage && (
+                      <Image
+                        src={selectedImage as string}
+                        alt="Selected image"
+                        width={200}
+                        height={200}
+                        onClick={() => window.open(selectedImage)}
+                        className="cursor-pointer"
+                      />
+                    )}
                   </FormItem>
                 )}
               />
@@ -288,6 +342,9 @@ export function Demo() {
                 <Button type="submit">run</Button>
                 <Button type="button" onClick={runTextOnly}>
                   Run Text Only
+                </Button>
+                <Button type="button" onClick={runImageOnly}>
+                  Run Image Only
                 </Button>
               </div>
             </form>
@@ -323,7 +380,7 @@ export function Demo() {
             <CardContent className="space-y-2">
               <div className="space-y-1">
                 {textLoading && <Spinner />}
-                {text && <div className="mx-auto block w-max">{text}</div>}
+                {textMsg && <div className="mx-auto block w-max">{textMsg}</div>}
                 {textTime > 0 && <div className="text-sm">Time taken: {textTime}s</div>}
                 {textInferenceSorted && (
                   <p>

@@ -1,10 +1,10 @@
 import * as ort from 'onnxruntime-web';
-import { BertTokenizer, softmax } from '@xenova/transformers';
+import { BertTokenizer, ImageFeatureExtractor, RawImage, softmax } from '@xenova/transformers';
 import tokenizerJSON from '@/model/bio_clinical_bert_tokenizer/tokenizer.json';
 import tokenizerConfig from '@/model/bio_clinical_bert_tokenizer/tokenizer_config.json';
 import { ModelWebWorkerSendMessage } from './worker-types';
 import { NLP_MODEL_URL } from '@/utils/constants';
-import { classificationMap } from '@/data/classification-map';
+import { textClassificationMap } from '@/data/classification-map';
 
 console.log('webworker initialized');
 
@@ -52,7 +52,7 @@ function inverseLogit(x: number) {
 export async function classificationClasses(classProbabilities: number[], logits: ort.Tensor) {
   const data = await logits.getData();
   return classProbabilities.map((prob, index) => {
-    return { label: classificationMap[index], probability: prob, logits: data[index], odds_ratio: inverseLogit(data[index] as number) };
+    return { label: textClassificationMap[index], probability: prob, logits: data[index], odds_ratio: inverseLogit(data[index] as number) };
   });
 }
 
@@ -92,7 +92,32 @@ const runTextClassificationInference = async (input: string) => {
   console.log('outputSoftmax: ', outputSoftmax);
   const results = await classificationClasses(outputSoftmax, output);
 
-  self.postMessage({ type: 'inference', model: 'text', payload: { results, inferenceTime } });
+  self.postMessage({ type: 'textInference', model: 'text', payload: { results, inferenceTime } });
+};
+
+async function imagePreprocessor(url: string | URL): Promise<ort.Tensor> {
+  const image = await RawImage.fromURL(url);
+  const preprocessor = new ImageFeatureExtractor({
+    image_mean: [0.485, 0.456, 0.406],
+    image_std: [0.229, 0.224, 0.225],
+    do_rescale: false,
+    rescale_factor: 1 / 255,
+    do_normalize: true,
+    do_resize: true,
+    resample: 2,
+    size: {
+      width: 256,
+      height: 256,
+    },
+  });
+  const res = await preprocessor.preprocess(image, { do_normalize: true, do_convert_rgb: true });
+  return res.pixel_values as unknown as ort.Tensor;
+}
+
+const runImageClassificationInference = async (input: string) => {
+  self.postMessage({ type: 'update', model: 'image', payload: 'Preprocessing Image' });
+  const val = await imagePreprocessor(input);
+  console.log(val.data);
 };
 
 self.addEventListener('message', (event: MessageEvent<ModelWebWorkerSendMessage>) => {
@@ -101,6 +126,9 @@ self.addEventListener('message', (event: MessageEvent<ModelWebWorkerSendMessage>
   switch (type) {
     case 'textOnly':
       runTextClassificationInference(payload);
+      break;
+    case 'imageOnly':
+      runImageClassificationInference(payload);
       break;
     default:
       break;
