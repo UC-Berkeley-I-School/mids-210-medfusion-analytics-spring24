@@ -43,7 +43,7 @@ const Chart: React.FC<{ data: InferenceDatum[]; type: 'probability' | 'odds_rati
           text: (d: InferenceDatum) => format(d[type]),
           textAnchor: 'start',
           dx: 3,
-          filter: (d: InferenceDatum) => d.probability <= 0.01,
+          filter: (d: InferenceDatum) => d[type] <= 0.05,
           fontSize: 12,
         }),
         Plot.text(data, {
@@ -52,7 +52,7 @@ const Chart: React.FC<{ data: InferenceDatum[]; type: 'probability' | 'odds_rati
           text: (d: InferenceDatum) => format(d[type]),
           textAnchor: 'end',
           dx: -3,
-          filter: (d: InferenceDatum) => d[type] > 0.01,
+          filter: (d: InferenceDatum) => d[type] > 0.05,
           fill: 'white',
           fontSize: 12,
         }),
