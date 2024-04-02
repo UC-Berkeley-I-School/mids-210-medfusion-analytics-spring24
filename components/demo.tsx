@@ -249,7 +249,7 @@ export function Demo() {
   );
 
   return (
-    <TooltipProvider delayDuration={0}>
+    <>
       <Card className="w-auto">
         <CardHeader>
           <CardTitle>input form</CardTitle>
@@ -264,107 +264,109 @@ export function Demo() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-2">
-                {tabularInput({
-                  control: form.control,
-                  fieldname: 'temperature',
-                  name: 'Temperature ºF',
-                  placeholder: '98.5',
-                })}
-                {tabularInput({
-                  control: form.control,
-                  fieldname: 'heartrate',
-                  name: 'Heart Rate (BPM)',
-                  placeholder: '85',
-                })}
-                {tabularInput({
-                  control: form.control,
-                  fieldname: 'resprate',
-                  name: 'Respiratory Rate (BPM)',
-                  description: "Patient's respiratory rate in breaths per minute",
-                  placeholder: '18',
-                })}
-                {tabularInput({
-                  control: form.control,
-                  fieldname: 'o2sat',
-                  name: 'O2 Saturation (%)',
-                  description: "Patient's oxygen saturation in percentage (peripheral)",
-                  placeholder: '98',
-                })}
-                {tabularInput({
-                  control: form.control,
-                  fieldname: 'sbp',
-                  name: 'Systolic Blood Pressure (mmHg)',
-                  description: "Patient's systolic blood pressure",
-                  placeholder: '132',
-                })}
-                {tabularInput({
-                  control: form.control,
-                  fieldname: 'dbp',
-                  name: 'Diastolic Blood Pressure (mmHg)',
-                  description: "Patient's diastolic blood pressure",
-                  placeholder: '73',
-                })}
-                {tabularInput({
-                  control: form.control,
-                  fieldname: 'pain',
-                  name: 'Pain (0-10)',
-                  description: "Patient's pain level from 0 to 10",
-                  placeholder: '0',
-                })}
-                {tabularInput({
-                  control: form.control,
-                  fieldname: 'acuity',
-                  name: 'Acuity (1-5)',
-                  description: "Patient's acuity level from 1 to 5",
-                  placeholder: '2',
-                })}
-              </div>
-              <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Patient notes</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="The patient entered with..." className="resize-y" rows={4} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Chest xray image</FormLabel>
-                    <FormControl>
-                      <Input className="resize-none" type="file" {...fileRef} />
-                    </FormControl>
-                    <FormMessage />
-                    {selectedImage && (
-                      <Image
-                        src={selectedImage as string}
-                        alt="Selected image"
-                        width={200}
-                        height={200}
-                        onClick={() => window.open(selectedImage)}
-                        className="cursor-pointer"
-                      />
-                    )}
-                  </FormItem>
-                )}
-              />
-              <div className="flex gap-2">
-                <Button type="submit">run</Button>
-                <Button type="button" onClick={runTextOnly}>
-                  Run Text Only
-                </Button>
-                <Button type="button" onClick={runImageOnly}>
-                  Run Image Only
-                </Button>
-              </div>
+              <TooltipProvider delayDuration={0}>
+                <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-2">
+                  {tabularInput({
+                    control: form.control,
+                    fieldname: 'temperature',
+                    name: 'Temperature ºF',
+                    placeholder: '98.5',
+                  })}
+                  {tabularInput({
+                    control: form.control,
+                    fieldname: 'heartrate',
+                    name: 'Heart Rate (BPM)',
+                    placeholder: '85',
+                  })}
+                  {tabularInput({
+                    control: form.control,
+                    fieldname: 'resprate',
+                    name: 'Respiratory Rate (BPM)',
+                    description: "Patient's respiratory rate in breaths per minute",
+                    placeholder: '18',
+                  })}
+                  {tabularInput({
+                    control: form.control,
+                    fieldname: 'o2sat',
+                    name: 'O2 Saturation (%)',
+                    description: "Patient's oxygen saturation in percentage (peripheral)",
+                    placeholder: '98',
+                  })}
+                  {tabularInput({
+                    control: form.control,
+                    fieldname: 'sbp',
+                    name: 'Systolic Blood Pressure (mmHg)',
+                    description: "Patient's systolic blood pressure",
+                    placeholder: '132',
+                  })}
+                  {tabularInput({
+                    control: form.control,
+                    fieldname: 'dbp',
+                    name: 'Diastolic Blood Pressure (mmHg)',
+                    description: "Patient's diastolic blood pressure",
+                    placeholder: '73',
+                  })}
+                  {tabularInput({
+                    control: form.control,
+                    fieldname: 'pain',
+                    name: 'Pain (0-10)',
+                    description: "Patient's pain level from 0 to 10",
+                    placeholder: '0',
+                  })}
+                  {tabularInput({
+                    control: form.control,
+                    fieldname: 'acuity',
+                    name: 'Acuity (1-5)',
+                    description: "Patient's acuity level from 1 to 5",
+                    placeholder: '2',
+                  })}
+                </div>
+                <FormField
+                  control={form.control}
+                  name="notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Patient notes</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="The patient entered with..." className="resize-y" rows={4} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Chest xray image</FormLabel>
+                      <FormControl>
+                        <Input className="resize-none" type="file" {...fileRef} />
+                      </FormControl>
+                      <FormMessage />
+                      {selectedImage && (
+                        <Image
+                          src={selectedImage as string}
+                          alt="Selected image"
+                          width={200}
+                          height={200}
+                          onClick={() => window.open(selectedImage)}
+                          className="cursor-pointer"
+                        />
+                      )}
+                    </FormItem>
+                  )}
+                />
+                <div className="flex gap-2">
+                  <Button type="submit">run</Button>
+                  <Button type="button" onClick={runTextOnly}>
+                    Run Text Only
+                  </Button>
+                  <Button type="button" onClick={runImageOnly}>
+                    Run Image Only
+                  </Button>
+                </div>
+              </TooltipProvider>
             </form>
           </Form>
         </CardContent>
@@ -461,6 +463,6 @@ export function Demo() {
           </div>
         </CardContent>
       </Card>
-    </TooltipProvider>
+    </>
   );
 }
