@@ -3,7 +3,7 @@ import { BertTokenizer, ImageFeatureExtractor, RawImage, softmax } from '@xenova
 import tokenizerJSON from '@/model/bio_clinical_bert_tokenizer/tokenizer.json';
 import tokenizerConfig from '@/model/bio_clinical_bert_tokenizer/tokenizer_config.json';
 import { ModelWebWorkerSendMessage } from './worker-types';
-import { IMAGE_MODEL_URL, NLP_MODEL_URL } from '@/utils/constants';
+import { IMAGE_MODEL_URL, NLP_MODEL_URL, TABULAR_MODEL_URL } from '@/utils/constants';
 import { textClassificationMap } from '@/data/classification-map';
 
 console.log('webworker initialized');
@@ -55,6 +55,47 @@ export async function classificationClasses(classProbabilities: number[], logits
     return { label: textClassificationMap[index], probability: prob, logits: data[index], odds_ratio: inverseLogit(data[index] as number) };
   });
 }
+
+const runTabularClassificationInference = async (input: { [key: string]: number; }) => {
+  let session: ort.InferenceSession;
+  try {
+    self.postMessage({ type: 'update', model: 'tabular', payload: 'Creating inference session' });
+    session = await InferenceSessionSingleton.getInstance(TABULAR_MODEL_URL);
+  } catch (error) {
+    console.error(error);
+    self.postMessage({ type: 'error', model: 'tabular', payload: error });
+    return;
+  }
+
+  console.log(session);
+  self.postMessage({ type: 'update', model: 'tabular', payload: 'Running inference' });
+
+  const start = performance.now();
+  const feeds: Record<string, ort.Tensor> = {};
+  const float32_inputs = ['temperature', 'heartrate', 'resprate', 'o2sat', 'sbp', 'dbp'];
+  const int64_inputs = ['pain', 'acuity'];
+  for (const inputName of session.inputNames) {
+    if (float32_inputs.includes(inputName)) {
+      feeds[inputName] = new ort.Tensor('float32', [input[inputName]], [1]);
+    } else if (int64_inputs.includes(inputName)) {
+      feeds[inputName] = new ort.Tensor('int64', [input[inputName]], [1]);
+    }
+  }
+  console.log(feeds, session.outputNames);
+
+  const outputData = await session.run(feeds);
+  const end = performance.now();
+
+  const inferenceTime = (end - start) / 1000;
+  console.log(outputData, session.outputNames);
+  const output = outputData.probabilities;
+  const outputSoftmax = softmax(Array.prototype.slice.call(output.data));
+  console.log('outputSoftmax: ', outputSoftmax);
+  const results = await classificationClasses(outputSoftmax, output);
+
+  self.postMessage({ type: 'tabularInference', model: 'tabular', payload: { results, inferenceTime } });
+
+};
 
 const runTextClassificationInference = async (input: string) => {
   // 1. Tokenize input
@@ -154,6 +195,9 @@ self.addEventListener('message', (event: MessageEvent<ModelWebWorkerSendMessage>
       break;
     case 'imageOnly':
       runImageClassificationInference(payload);
+      break;
+    case 'tabularOnly':
+      runTabularClassificationInference(payload);
       break;
     default:
       break;

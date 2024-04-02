@@ -24,6 +24,12 @@ import Image from 'next/image';
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
 export function Demo() {
+  const [tabularMsg, setTabularMsg] = useState<string>('');
+  const [tabularTime, setTabularTime] = useState<number>(0);
+  const [tabularInference, setTabularInference] = useState<InferenceDatum[]>();
+  const [tabularInferenceSorted, setTabularInferenceSorted] = useState<InferenceDatum[]>();
+  const [tabularLoading, setTabularLoading] = useState<boolean>(false);
+
   const [textMsg, setTextMsg] = useState<string>('');
   const [textTime, setTextTime] = useState<number>(0);
   const [textInference, setTextInference] = useState<InferenceDatum[]>();
@@ -92,6 +98,10 @@ export function Demo() {
           break;
         case 'image':
           imageInferenceMessageProcessor(event);
+          break;
+        case 'tabular':
+          tabularInferenceMessageProcessor(event);
+          break;
         default:
           break;
       }
@@ -101,8 +111,31 @@ export function Demo() {
     return () => worker.current?.removeEventListener('message', onMessageReceived);
   });
 
+  const tabularInferenceMessageProcessor = (event: MessageEvent<ModelWebWorkerReceiveMessage>) => {
+    const { type, payload } = event.data;
+    switch (type) {
+      case 'update':
+        setTabularMsg(payload);
+        break;
+      case 'tabularInference':
+        setTabularLoading(false);
+        setTabularMsg('');
+        setTabularTime(payload.inferenceTime);
+        setTabularInference(payload.results);
+        setTabularInferenceSorted(getValuesSorted(payload.results));
+        break;
+      case 'error':
+        setTabularLoading(false);
+        console.error(payload);
+        setTabularMsg('error occurred: ' + payload.message);
+        break;
+      default:
+        break;
+    }
+  };
+
   const textInferenceMessageProcessor = (event: MessageEvent<ModelWebWorkerReceiveMessage>) => {
-    const { type, payload, model } = event.data;
+    const { type, payload } = event.data;
     switch (type) {
       case 'update':
         setTextMsg(payload);
@@ -125,7 +158,7 @@ export function Demo() {
   };
 
   const imageInferenceMessageProcessor = (event: MessageEvent<ModelWebWorkerReceiveMessage>) => {
-    const { type, payload, model } = event.data;
+    const { type, payload } = event.data;
     switch (type) {
       case 'update':
         setImageMsg(payload);
@@ -181,6 +214,20 @@ export function Demo() {
     const image = new File([data], 'preset.jpg', { type: metadata });
     form.setValue('image', [image]);
     setSelectedImage(preset.image_min_res);
+  };
+
+  const runTabularOnly = () => {
+    const values = {
+      temperature: form.getValues('temperature'),
+      heartrate: form.getValues('heartrate'),
+      resprate: form.getValues('resprate'),
+      o2sat: form.getValues('o2sat'),
+      sbp: form.getValues('sbp'),
+      dbp: form.getValues('dbp'),
+      pain: form.getValues('pain'),
+      acuity: form.getValues('acuity'),
+    };
+    runWorker({ type: 'tabularOnly', payload: values });
   };
 
   const runTextOnly = () => {
@@ -359,6 +406,9 @@ export function Demo() {
                 />
                 <div className="flex gap-2">
                   <Button type="submit">run</Button>
+                  <Button type="button" onClick={runTabularOnly}>
+                    Run Tabular Only
+                  </Button>
                   <Button type="button" onClick={runTextOnly}>
                     Run Text Only
                   </Button>
@@ -386,9 +436,24 @@ export function Demo() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut aliquam optio neque officiis?
-                Exercitationem, doloribus explicabo quasi nihil sit dolore est. Inventore, ad? Maiores itaque dolorum
-                et. Deserunt, eius soluta.
+                {tabularLoading && <Spinner />}
+                {tabularMsg && <div className="mx-auto block w-max">{tabularMsg}</div>}
+                {tabularTime > 0 && <div className="text-sm">Time taken: {tabularTime}s</div>}
+                {tabularInferenceSorted && (
+                  <p>
+                    The model predicts that among the possible findings, the patient has &quot;
+                    {categoryToName[tabularInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                    {(tabularInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
+                    follows:{' '}
+                    {tabularInferenceSorted
+                      .slice(1)
+                      .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
+                      .join(', ')}
+                  </p>
+                )}
+                <br />
+                {tabularInference && <Chart data={tabularInference} type="probability" />}
+                {/* {tabularInference && <Chart data={tabularInference} type="odds_ratio" />} */}
               </div>
             </CardContent>
           </TabsContent>
@@ -416,7 +481,7 @@ export function Demo() {
                 )}
                 <br />
                 {textInference && <Chart data={textInference} type="probability" />}
-                {textInference && <Chart data={textInference} type="odds_ratio" />}
+                {/* {textInference && <Chart data={textInference} type="odds_ratio" />} */}
               </div>
             </CardContent>
           </TabsContent>
@@ -444,7 +509,7 @@ export function Demo() {
                 )}
                 <br />
                 {imageInference && <Chart data={imageInference} type="probability" />}
-                {imageInference && <Chart data={imageInference} type="odds_ratio" />}
+                {/* {imageInference && <Chart data={imageInference} type="odds_ratio" />} */}
               </div>
             </CardContent>
           </TabsContent>
