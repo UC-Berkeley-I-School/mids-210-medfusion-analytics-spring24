@@ -4,7 +4,7 @@ import tokenizerJSON from '@/model/bio_clinical_bert_tokenizer/tokenizer.json';
 import tokenizerConfig from '@/model/bio_clinical_bert_tokenizer/tokenizer_config.json';
 import { ModelWebWorkerSendMessage } from './worker-types';
 import { IMAGE_MODEL_URL, NLP_MODEL_URL, TABULAR_MODEL_URL } from '@/utils/constants';
-import { textClassificationMap } from '@/data/classification-map';
+import { classificationMap } from '@/data/classification-map';
 
 console.log('webworker initialized');
 
@@ -52,7 +52,7 @@ function inverseLogit(x: number) {
 export async function classificationClasses(classProbabilities: number[], logits: ort.Tensor) {
   const data = await logits.getData();
   return classProbabilities.map((prob, index) => {
-    return { label: textClassificationMap[index], probability: prob, logits: data[index], odds_ratio: inverseLogit(data[index] as number) };
+    return { label: classificationMap[index], probability: prob, logits: data[index], odds_ratio: inverseLogit(data[index] as number) };
   });
 }
 
@@ -67,7 +67,6 @@ const runTabularClassificationInference = async (input: { [key: string]: number;
     return;
   }
 
-  console.log(session);
   self.postMessage({ type: 'update', model: 'tabular', payload: 'Running inference' });
 
   const start = performance.now();
@@ -81,16 +80,13 @@ const runTabularClassificationInference = async (input: { [key: string]: number;
       feeds[inputName] = new ort.Tensor('int64', [input[inputName]], [1]);
     }
   }
-  console.log(feeds, session.outputNames);
 
   const outputData = await session.run(feeds);
   const end = performance.now();
 
   const inferenceTime = (end - start) / 1000;
-  console.log(outputData, session.outputNames);
   const output = outputData.probabilities;
   const outputSoftmax = softmax(Array.prototype.slice.call(output.data));
-  console.log('outputSoftmax: ', outputSoftmax);
   const results = await classificationClasses(outputSoftmax, output);
 
   self.postMessage({ type: 'tabularInference', model: 'tabular', payload: { results, inferenceTime } });

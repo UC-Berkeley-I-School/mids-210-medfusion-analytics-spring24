@@ -6,7 +6,7 @@ import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
-import { z } from 'zod';
+import { set, z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
@@ -195,6 +195,9 @@ export function Demo() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+    runImageOnly();
+    runTextOnly();
+    runTabularOnly();
   }
 
   const loadPreset = async (index: number) => {
@@ -208,12 +211,12 @@ export function Demo() {
     form.setValue('pain', preset.pain);
     form.setValue('acuity', preset.acuity);
     form.setValue('notes', preset.history_of_present_illness);
-    const response = await fetch(preset.image_min_res);
+    const response = await fetch(preset.image);
     const data = await response.blob();
     const metadata = response.headers.get('content-type') || 'image/jpeg';
     const image = new File([data], 'preset.jpg', { type: metadata });
     form.setValue('image', [image]);
-    setSelectedImage(preset.image_min_res);
+    setSelectedImage(preset.image);
   };
 
   const runTabularOnly = () => {
@@ -227,6 +230,11 @@ export function Demo() {
       pain: form.getValues('pain'),
       acuity: form.getValues('acuity'),
     };
+    setTabularLoading(true);
+    setTabularTime(0);
+    setTabularInference(undefined);
+    setTabularMsg('Running inference...');
+    setTabularInferenceSorted(undefined);
     runWorker({ type: 'tabularOnly', payload: values });
   };
 
@@ -235,6 +243,7 @@ export function Demo() {
     setTextTime(0);
     setTextInference(undefined);
     setTextMsg('Running inference...');
+    setTextInferenceSorted(undefined);
     runWorker({ type: 'textOnly', payload: form.getValues('notes') });
   };
 
@@ -246,6 +255,7 @@ export function Demo() {
     setImageTime(0);
     setImageInference(undefined);
     setImageMsg('Running inference...');
+    setImageInferenceSorted(undefined);
     runWorker({ type: 'imageOnly', payload: selectedImage });
   };
 
@@ -305,6 +315,15 @@ export function Demo() {
             Load preset:
             <Button variant="ghost" onClick={() => loadPreset(0)}>
               A
+            </Button>
+            <Button variant="ghost" onClick={() => loadPreset(1)}>
+              B
+            </Button>
+            <Button variant="ghost" onClick={() => loadPreset(2)}>
+              C
+            </Button>
+            <Button variant="ghost" onClick={() => loadPreset(3)}>
+              D
             </Button>
           </CardDescription>
         </CardHeader>
@@ -405,7 +424,7 @@ export function Demo() {
                   )}
                 />
                 <div className="flex gap-2">
-                  <Button type="submit">run</Button>
+                  <Button type="submit">Run</Button>
                   <Button type="button" onClick={runTabularOnly}>
                     Run Tabular Only
                   </Button>

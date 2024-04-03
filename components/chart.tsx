@@ -66,9 +66,9 @@ const Chart: React.FC<{ data: InferenceDatum[]; type: 'probability' | 'odds_rati
     <>
       {type === 'probability' ? (
         <>
-          <h4 className="text-center">Relative Probability of Predicted Finding</h4>
+          <h4 className="text-center">Relative Likelihood of Predicted Finding</h4>
           <p className="text-center text-xs text-balance">
-            This is the relative probability of the input predicting the given finding as compared to other findings.
+            This is the relative likelihood of the input predicting the given finding as compared to other findings.
           </p>
         </>
       ) : (
