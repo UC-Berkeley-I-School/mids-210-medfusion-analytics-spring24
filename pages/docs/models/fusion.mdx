@@ -4,4 +4,4 @@ title: Fusion Model
 
 # Fusion Model
 
-This is a guide to the early fusion model in medical multimodal modeling.
+Our fusion model integrates diverse data sources and model predictions to enhance diagnostic accuracy for rare diseases in chest X-ray images. Early Fusion 1a combines raw tabular data, textual notes, and X-ray images at the input level to feed a singular model, leveraging intact features and probabilities extracted from both NLP and Computer Vision (CV) models. Early Fusion 1b follows a similar approach but uses extracted probabilities from NLP and CV models as input. In contrast, Early Fusion 2 takes a hybrid approach, fusing embeddings from the NLP model and extracted features from the CV model with intact tabular data, offering a more nuanced combination of features for the final model to process. This composite approach aims to utilize the strengths of each modality—textual context from notes, visual patterns from images, and structured data insights—ensuring a comprehensive evaluation of patient data for the web application, thus providing a robust tool for healthcare professionals in diagnosing complex pathologies.
