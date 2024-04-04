@@ -2,8 +2,8 @@ import * as ort from 'onnxruntime-web';
 import { BertTokenizer, ImageFeatureExtractor, RawImage, softmax } from '@xenova/transformers';
 import tokenizerJSON from '@/model/bio_clinical_bert_tokenizer/tokenizer.json';
 import tokenizerConfig from '@/model/bio_clinical_bert_tokenizer/tokenizer_config.json';
-import { ModelWebWorkerSendMessage } from './worker-types';
-import { IMAGE_MODEL_URL, NLP_MODEL_URL, TABULAR_MODEL_URL } from '@/utils/constants';
+import { FusionModelInputs, ModelWebWorkerSendMessage } from './worker-types';
+import { FUSION_MODEL_URL, IMAGE_MODEL_URL, NLP_MODEL_URL, TABULAR_MODEL_URL } from '@/utils/constants';
 import { classificationMap } from '@/data/classification-map';
 
 console.log('webworker initialized');
@@ -182,6 +182,41 @@ const runImageClassificationInference = async (input: string) => {
   self.postMessage({ type: 'imageInference', model: 'image', payload: { results, inferenceTime } });
 };
 
+const runFusionInference = async (input: FusionModelInputs) => {
+  let session: ort.InferenceSession;
+  try {
+    self.postMessage({ type: 'update', model: 'fusion', payload: 'Creating inference session' });
+    session = await InferenceSessionSingleton.getInstance(FUSION_MODEL_URL);
+  } catch (error) {
+    console.error(error);
+    self.postMessage({ type: 'error', model: 'fusion', payload: error });
+    return;
+  }
+
+  self.postMessage({ type: 'update', model: 'fusion', payload: 'Running inference' });
+
+  const start = performance.now();
+  const feeds: Record<string, ort.Tensor> = {};
+  const int64_inputs = ['pain', 'acuity'];
+  for (const inputName of session.inputNames) {
+    if (int64_inputs.includes(inputName)) {
+      feeds[inputName] = new ort.Tensor('int64', [input[inputName as keyof FusionModelInputs]], [1]);
+    } else {
+      feeds[inputName] = new ort.Tensor('float32', [input[inputName as keyof FusionModelInputs]], [1]);
+    }
+  }
+
+  const outputData = await session.run(feeds);
+  const end = performance.now();
+
+  const inferenceTime = (end - start) / 1000;
+  const output = outputData.probabilities;
+  const outputSoftmax = softmax(Array.prototype.slice.call(output.data));
+  const results = await classificationClasses(outputSoftmax, output);
+
+  self.postMessage({ type: 'fusionInference', model: 'fusion', payload: { results, inferenceTime } });
+};
+
 self.addEventListener('message', (event: MessageEvent<ModelWebWorkerSendMessage>) => {
   console.log(event.data);
   const { type, payload } = event.data;
@@ -194,6 +229,9 @@ self.addEventListener('message', (event: MessageEvent<ModelWebWorkerSendMessage>
       break;
     case 'tabularOnly':
       runTabularClassificationInference(payload);
+      break;
+    case 'fusion':
+      runFusionInference(payload);
       break;
     default:
       break;

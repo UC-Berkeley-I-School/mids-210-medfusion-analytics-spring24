@@ -16,7 +16,7 @@ import { Textarea } from './ui/textarea';
 import { Spinner } from './ui/spinner';
 import { InferenceDatum, categoryToName, presets } from '@/data/classification-map';
 import { sendMessage } from '@/model/sender';
-import { ModelWebWorkerReceiveMessage, ModelWebWorkerSendMessage } from '@/model/worker-types';
+import { FusionModelInputs, ModelWebWorkerReceiveMessage, ModelWebWorkerSendMessage } from '@/model/worker-types';
 import Chart from './chart';
 import { sort } from 'd3-array';
 import Image from 'next/image';
@@ -41,6 +41,11 @@ export function Demo() {
   const [imageInference, setImageInference] = useState<InferenceDatum[]>();
   const [imageInferenceSorted, setImageInferenceSorted] = useState<InferenceDatum[]>();
   const [imageLoading, setImageLoading] = useState<boolean>(false);
+
+  const [fusionMsg, setFusionMsg] = useState<string>('');
+  const [fusionInference, setFusionInference] = useState<InferenceDatum[]>();
+  const [fusionInferenceSorted, setFusionInferenceSorted] = useState<InferenceDatum[]>();
+  const [fusionLoading, setFusionLoading] = useState<boolean>(false);
 
   const worker = useRef<Worker | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | URL>();
@@ -85,6 +90,25 @@ export function Demo() {
     setSelectedImage(url);
   };
 
+  const loadPreset = async (index: number) => {
+    const preset = presets[index];
+    form.setValue('temperature', preset.temperature);
+    form.setValue('heartrate', preset.heartrate);
+    form.setValue('resprate', preset.resprate);
+    form.setValue('o2sat', preset.o2sat);
+    form.setValue('sbp', preset.sbp);
+    form.setValue('dbp', preset.dbp);
+    form.setValue('pain', preset.pain);
+    form.setValue('acuity', preset.acuity);
+    form.setValue('notes', preset.history_of_present_illness);
+    const response = await fetch(preset.image);
+    const data = await response.blob();
+    const metadata = response.headers.get('content-type') || 'image/jpeg';
+    const image = new File([data], 'preset.jpg', { type: metadata });
+    form.setValue('image', [image]);
+    setSelectedImage(preset.image);
+  };
+
   useEffect(() => {
     if (!worker.current) {
       worker.current = new Worker(new URL('@/model/worker.ts', import.meta.url), { type: 'module' });
@@ -101,6 +125,9 @@ export function Demo() {
           break;
         case 'tabular':
           tabularInferenceMessageProcessor(event);
+          break;
+        case 'fusion':
+          fusionInferenceMessageProcessor(event);
           break;
         default:
           break;
@@ -180,6 +207,28 @@ export function Demo() {
     }
   };
 
+  const fusionInferenceMessageProcessor = (event: MessageEvent<ModelWebWorkerReceiveMessage>) => {
+    const { type, payload } = event.data;
+    switch (type) {
+      case 'update':
+        setFusionMsg(payload);
+        break;
+      case 'fusionInference':
+        setFusionLoading(false);
+        setFusionMsg('');
+        setFusionInference(payload.results);
+        setFusionInferenceSorted(getValuesSorted(payload.results));
+        break;
+      case 'error':
+        setFusionLoading(false);
+        console.error(payload);
+        setFusionMsg('error occurred: ' + payload.message);
+        break;
+      default:
+        break;
+    }
+  };
+
   const runWorker = useCallback((val: ModelWebWorkerSendMessage) => {
     if (worker.current) {
       sendMessage(worker.current, val);
@@ -198,26 +247,41 @@ export function Demo() {
     runImageOnly();
     runTextOnly();
     runTabularOnly();
+    setFusionLoading(true);
+    setFusionInference(undefined);
+    setFusionMsg('Awaiting outputs from base models...');
+    setFusionInferenceSorted(undefined);
   }
 
-  const loadPreset = async (index: number) => {
-    const preset = presets[index];
-    form.setValue('temperature', preset.temperature);
-    form.setValue('heartrate', preset.heartrate);
-    form.setValue('resprate', preset.resprate);
-    form.setValue('o2sat', preset.o2sat);
-    form.setValue('sbp', preset.sbp);
-    form.setValue('dbp', preset.dbp);
-    form.setValue('pain', preset.pain);
-    form.setValue('acuity', preset.acuity);
-    form.setValue('notes', preset.history_of_present_illness);
-    const response = await fetch(preset.image);
-    const data = await response.blob();
-    const metadata = response.headers.get('content-type') || 'image/jpeg';
-    const image = new File([data], 'preset.jpg', { type: metadata });
-    form.setValue('image', [image]);
-    setSelectedImage(preset.image);
-  };
+  // run the fusion model once all inference results are available
+  useEffect(() => {
+    if (!tabularInference || !textInference || !imageInference) {
+      return;
+    }
+
+    const values: FusionModelInputs = {
+      temperature: form.getValues('temperature'),
+      heartrate: form.getValues('heartrate'),
+      resprate: form.getValues('resprate'),
+      o2sat: form.getValues('o2sat'),
+      sbp: form.getValues('sbp'),
+      dbp: form.getValues('dbp'),
+      pain: form.getValues('pain'),
+      acuity: form.getValues('acuity'),
+      no_findings_prob_img: imageInference.find((d) => d.label === 'no_finding')!.probability,
+      atelectasis_prob_img: imageInference.find((d) => d.label === 'atelectasis')!.probability,
+      cardiomegaly_prob_img: imageInference.find((d) => d.label === 'cardiomegaly')!.probability,
+      lung_opacity_prob_img: imageInference.find((d) => d.label === 'lung_opacity')!.probability,
+      plueral_effusion_prob_img: imageInference.find((d) => d.label === 'pleural_effusion')!.probability,
+      no_findings_prob_txt: textInference.find((d) => d.label === 'no_finding')!.probability,
+      atelectasis_prob_txt: textInference.find((d) => d.label === 'atelectasis')!.probability,
+      cardiomegaly_prob_txt: textInference.find((d) => d.label === 'cardiomegaly')!.probability,
+      lung_opacity_prob_txt: textInference.find((d) => d.label === 'lung_opacity')!.probability,
+      plueral_effusion_prob_txt: textInference.find((d) => d.label === 'pleural_effusion')!.probability,
+    };
+    console.log(textInference, imageInference, values);
+    runWorker({ type: 'fusion', payload: values });
+  }, [textInference, tabularInference, imageInference, form, runWorker]);
 
   const runTabularOnly = () => {
     const values = {
@@ -425,13 +489,13 @@ export function Demo() {
                 />
                 <div className="flex gap-2">
                   <Button type="submit">Run</Button>
-                  <Button type="button" onClick={runTabularOnly}>
+                  <Button type="button" onClick={runTabularOnly} className="hidden">
                     Run Tabular Only
                   </Button>
-                  <Button type="button" onClick={runTextOnly}>
+                  <Button type="button" onClick={runTextOnly} className="hidden">
                     Run Text Only
                   </Button>
-                  <Button type="button" onClick={runImageOnly}>
+                  <Button type="button" onClick={runImageOnly} className="hidden">
                     Run Image Only
                   </Button>
                 </div>
@@ -541,9 +605,22 @@ export function Demo() {
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="space-y-1">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut aliquam optio neque officiis? Exercitationem,
-            doloribus explicabo quasi nihil sit dolore est. Inventore, ad? Maiores itaque dolorum et. Deserunt, eius
-            soluta.
+            {fusionLoading && <Spinner />}
+            {fusionMsg && <div className="mx-auto block w-max">{fusionMsg}</div>}
+            {fusionInferenceSorted && (
+              <p>
+                The model predicts that among the possible findings, the patient has &quot;
+                {categoryToName[fusionInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                {(fusionInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as
+                follows:{' '}
+                {fusionInferenceSorted
+                  .slice(1)
+                  .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
+                  .join(', ')}
+              </p>
+            )}
+            <br />
+            {fusionInference && <Chart data={fusionInference} type="probability" />}
           </div>
         </CardContent>
       </Card>
