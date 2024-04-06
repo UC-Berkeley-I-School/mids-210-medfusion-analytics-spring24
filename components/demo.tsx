@@ -20,6 +20,7 @@ import { FusionModelInputs, ModelWebWorkerReceiveMessage, ModelWebWorkerSendMess
 import Chart from './chart';
 import { sort } from 'd3-array';
 import Image from 'next/image';
+import { Link } from 'nextra-theme-docs';
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
@@ -506,6 +507,52 @@ export function Demo() {
       </Card>
 
       <Card className="mt-2">
+        <CardHeader>
+          <CardTitle>Fusion Inference</CardTitle>
+          <CardDescription>Inference results of the late fusion model.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="space-y-1">
+            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How it works</h4>
+            <p>
+              The fusion model derives its inputs from the base models below, taking its results and feeding it into a
+              classifier to determine most likely results. Across all of our available data, the fusion model performed
+              the best, returning the most predicted findings matching the real findings. To read more about how it
+              works and how we developed it, you can reach the{' '}
+              <Link href="/docs/models/fusion">fusion model documentation</Link>.
+            </p>
+            {!fusionInference && <p className="mt-4">Try running the demo!</p>}
+
+            {fusionLoading && <Spinner />}
+            {fusionMsg && <div className="mx-auto block w-max">{fusionMsg}</div>}
+            {fusionInferenceSorted && (
+              <>
+                <br />
+                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
+                <p>
+                  The model predicts that among the possible findings, the patient has &quot;
+                  {categoryToName[fusionInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                  {(fusionInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as
+                  follows:{' '}
+                  {fusionInferenceSorted
+                    .slice(1)
+                    .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
+                    .join(', ')}
+                </p>
+              </>
+            )}
+            {fusionInference && (
+              <>
+                <br />
+                <Chart data={fusionInference} type="probability" />
+                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How best to interpret this</h4>
+                <p>lorem ipsum</p>
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="mt-2">
         <Tabs defaultValue="tabular" className="w-auto">
           <TabsList className="grid w-auto grid-cols-3 mx-6 mt-6">
             <TabsTrigger value="tabular">Tabular</TabsTrigger>
@@ -519,24 +566,43 @@ export function Demo() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
+                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How it works</h4>
+                <p>
+                  The tabular model takes the tabular data that has been inputed (temperature, heartrate, etc.) and
+                  attempts to classify into one of five possible options. In a proper setting, this would be tens to
+                  hundreds of inputs that could be taken it, improving the models ability to predict a class, however
+                  due to a limitation of data, we only have these inputs. To read more about the tabular model, see the{' '}
+                  <Link href="/docs/models/tabular">tabular model documentation</Link>.
+                </p>
+                {!tabularInference && <p className="mt-4">Try running the demo!</p>}
+
                 {tabularLoading && <Spinner />}
                 {tabularMsg && <div className="mx-auto block w-max">{tabularMsg}</div>}
-                {tabularTime > 0 && <div className="text-sm">Time taken: {tabularTime}s</div>}
+                {tabularTime > 0 && <div className="text-sm hidden">Time taken: {tabularTime}s</div>}
                 {tabularInferenceSorted && (
-                  <p>
-                    The model predicts that among the possible findings, the patient has &quot;
-                    {categoryToName[tabularInferenceSorted[0].label]}&quot; with a relative probability of{' '}
-                    {(tabularInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
-                    follows:{' '}
-                    {tabularInferenceSorted
-                      .slice(1)
-                      .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
-                      .join(', ')}
-                  </p>
+                  <>
+                    <br />
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
+                    <p>
+                      The model predicts that among the possible findings, the patient has &quot;
+                      {categoryToName[tabularInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                      {(tabularInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
+                      follows:{' '}
+                      {tabularInferenceSorted
+                        .slice(1)
+                        .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
+                        .join(', ')}
+                    </p>
+                  </>
                 )}
-                <br />
-                {tabularInference && <Chart data={tabularInference} type="probability" />}
-                {/* {tabularInference && <Chart data={tabularInference} type="odds_ratio" />} */}
+                {tabularInference && (
+                  <>
+                    <br />
+                    <Chart data={tabularInference} type="probability" />
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How best to interpret this</h4>
+                    <p>lorem ipsum</p>
+                  </>
+                )}
               </div>
             </CardContent>
           </TabsContent>
@@ -547,24 +613,43 @@ export function Demo() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
+                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How it works</h4>
+                <p>
+                  The text model takes in the input from the notes, processed via a modified BioClinical Bert model. The
+                  model is trained on clinician notes describing the patient&apos;s present history of illness, with the
+                  expectation that it will learn the symptoms of the four possible options, and no findings if it cannot
+                  be determined. To read more about how it works and how we developed it, you can reach the{' '}
+                  <Link href="/docs/models/text">text model documentation</Link>.
+                </p>
+                {!textInference && <p className="mt-4">Try running the demo!</p>}
+
                 {textLoading && <Spinner />}
                 {textMsg && <div className="mx-auto block w-max">{textMsg}</div>}
-                {textTime > 0 && <div className="text-sm">Time taken: {textTime}s</div>}
+                {textTime > 0 && <div className="text-sm hidden">Time taken: {textTime}s</div>}
                 {textInferenceSorted && (
-                  <p>
-                    The model predicts that among the possible findings, the patient has &quot;
-                    {categoryToName[textInferenceSorted[0].label]}&quot; with a relative probability of{' '}
-                    {(textInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
-                    follows:{' '}
-                    {textInferenceSorted
-                      .slice(1)
-                      .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
-                      .join(', ')}
-                  </p>
+                  <>
+                    <br />
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
+                    <p>
+                      The model predicts that among the possible findings, the patient has &quot;
+                      {categoryToName[textInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                      {(textInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
+                      follows:{' '}
+                      {textInferenceSorted
+                        .slice(1)
+                        .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
+                        .join(', ')}
+                    </p>
+                  </>
                 )}
-                <br />
-                {textInference && <Chart data={textInference} type="probability" />}
-                {/* {textInference && <Chart data={textInference} type="odds_ratio" />} */}
+                {textInference && (
+                  <>
+                    <br />
+                    <Chart data={textInference} type="probability" />
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How best to interpret this</h4>
+                    <p>lorem ipsum</p>
+                  </>
+                )}
               </div>
             </CardContent>
           </TabsContent>
@@ -575,54 +660,46 @@ export function Demo() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
+                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How it works</h4>
+                <p>
+                  The image model utilizes chest xrays, preprocessed into a lower resolution. It utilizes EfficientNet
+                  image classification, resulting in an extremely powerful classification model. To read more about how
+                  it works and how we developed it, you can reach the{' '}
+                  <Link href="/docs/models/image">image model documentation</Link>.
+                </p>
+                {!imageInference && <p className="mt-4">Try running the demo!</p>}
+
                 {imageLoading && <Spinner />}
                 {imageMsg && <div className="mx-auto block w-max">{imageMsg}</div>}
-                {imageTime > 0 && <div className="text-sm">Time taken: {imageTime}s</div>}
+                {imageTime > 0 && <div className="text-sm hidden">Time taken: {imageTime}s</div>}
                 {imageInferenceSorted && (
-                  <p>
-                    The model predicts that among the possible findings, the patient has &quot;
-                    {categoryToName[imageInferenceSorted[0].label]}&quot; with a relative probability of{' '}
-                    {(imageInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
-                    follows:{' '}
-                    {imageInferenceSorted
-                      .slice(1)
-                      .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
-                      .join(', ')}
-                  </p>
+                  <>
+                    <br />
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
+                    <p>
+                      The model predicts that among the possible findings, the patient has &quot;
+                      {categoryToName[imageInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                      {(imageInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
+                      follows:{' '}
+                      {imageInferenceSorted
+                        .slice(1)
+                        .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
+                        .join(', ')}
+                    </p>
+                  </>
                 )}
-                <br />
-                {imageInference && <Chart data={imageInference} type="probability" />}
-                {/* {imageInference && <Chart data={imageInference} type="odds_ratio" />} */}
+                {imageInference && (
+                  <>
+                    <br />
+                    <Chart data={imageInference} type="probability" />
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How best to interpret this</h4>
+                    <p>lorem ipsum</p>
+                  </>
+                )}
               </div>
             </CardContent>
           </TabsContent>
         </Tabs>
-      </Card>
-      <Card className="mt-2">
-        <CardHeader>
-          <CardTitle>Fusion Inference</CardTitle>
-          <CardDescription>Inference results of the late fusion model.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <div className="space-y-1">
-            {fusionLoading && <Spinner />}
-            {fusionMsg && <div className="mx-auto block w-max">{fusionMsg}</div>}
-            {fusionInferenceSorted && (
-              <p>
-                The model predicts that among the possible findings, the patient has &quot;
-                {categoryToName[fusionInferenceSorted[0].label]}&quot; with a relative probability of{' '}
-                {(fusionInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as
-                follows:{' '}
-                {fusionInferenceSorted
-                  .slice(1)
-                  .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
-                  .join(', ')}
-              </p>
-            )}
-            <br />
-            {fusionInference && <Chart data={fusionInference} type="probability" />}
-          </div>
-        </CardContent>
       </Card>
     </>
   );
