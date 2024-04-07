@@ -6,7 +6,7 @@ import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
-import { set, z } from 'zod';
+import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
@@ -541,12 +541,31 @@ export function Demo() {
                 </p>
               </>
             )}
-            {fusionInference && (
+            {fusionInference && fusionInferenceSorted && (
               <>
                 <br />
                 <Chart data={fusionInference} type="probability" />
-                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How best to interpret this</h4>
-                <p>lorem ipsum</p>
+                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How to interpret this</h4>
+                <p>
+                  From the given inputs, the model has predicted that patient has &quot;
+                  {categoryToName[fusionInferenceSorted[0].label]}.&quot; However the model was only trained on five
+                  possible outcomes and with a limited dataset, so the results may not be accurate.
+                  {fusionInferenceSorted[0].probability < 0.6 && (
+                    <>
+                      {' '}
+                      Importantly, the model is not very confident in this prediction. In an actual clinical setting,
+                      the model should only display the top output based on a determined threshold of likelihood,
+                      however for the purposes of this demo, we are showing all results.
+                    </>
+                  )}
+                </p>
+                <br />
+                <p>
+                  It should also be noted here that the &quot;likelihood&quot; is not a true likelihood of the patient
+                  having this condition, but a relative likelihood compared to the other findings. Similarly, &quot;no
+                  findings&quot; is not a true negative, but scenario where the model could not match the patient&apos;s
+                  symptoms to any of the possible findings.
+                </p>
               </>
             )}
           </div>
@@ -595,12 +614,35 @@ export function Demo() {
                     </p>
                   </>
                 )}
-                {tabularInference && (
+                {tabularInference && tabularInferenceSorted && (
                   <>
                     <br />
                     <Chart data={tabularInference} type="probability" />
-                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How best to interpret this</h4>
-                    <p>lorem ipsum</p>
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How to interpret this</h4>
+                    <p>
+                      From the given inputs, the model has predicted that patient has &quot;
+                      {categoryToName[tabularInferenceSorted[0].label]}.&quot; However the model was only trained on
+                      five possible outcomes and with a limited dataset, so the results may not be accurate.
+                      {tabularInferenceSorted[0].probability < 0.6 && (
+                        <>
+                          {' '}
+                          Importantly, the model is not very confident in this prediction. In an actual clinical
+                          setting, the model should only display the top output based on a determined threshold of
+                          likelihood, however for the purposes of this demo, we are showing all results. For similar
+                          reasons, the output of a base model would normally not be shown.
+                        </>
+                      )}
+                    </p>
+                    <br />
+                    <p>
+                      As a tabular model trained on only eight inputs, attempting to determine five possible outcomes,
+                      this model is not very accurate. In a clinical setting, the model would be trained on hundreds of
+                      inputs and thousands of samples, improving its accuracy. However, for the purposes of this demo,
+                      we are showing the results of the model. At best, this model would probably only determine if the
+                      patient&apos;s condition deviate from the norm, warranting further investigation. It is with this
+                      mindset we included it as part of the fusion model so that it could possibly provide additional
+                      information to the overall prediction.
+                    </p>
                   </>
                 )}
               </div>
@@ -642,12 +684,32 @@ export function Demo() {
                     </p>
                   </>
                 )}
-                {textInference && (
+                {textInference && textInferenceSorted && (
                   <>
                     <br />
                     <Chart data={textInference} type="probability" />
-                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How best to interpret this</h4>
-                    <p>lorem ipsum</p>
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How to interpret this</h4>
+                    <p>
+                      From the given inputs, the model has predicted that patient has &quot;
+                      {categoryToName[textInferenceSorted[0].label]}.&quot; However the model was only trained on five
+                      possible outcomes and with a limited dataset, so the results may not be accurate.
+                      {textInferenceSorted[0].probability < 0.6 && (
+                        <>
+                          {' '}
+                          Importantly, the model is not very confident in this prediction. In an actual clinical
+                          setting, the model should only display the top output based on a determined threshold of
+                          likelihood, however for the purposes of this demo, we are showing all results. For similar
+                          reasons, the output of a base model would normally not be shown.
+                        </>
+                      )}
+                    </p>
+                    <br />
+                    <p>
+                      It should also be noted here that the &quot;likelihood&quot; is not a true likelihood of the
+                      patient having this condition, but a relative likelihood compared to the other findings.
+                      Similarly, &quot;no findings&quot; is not a true negative, but scenario where the model could not
+                      match the patient&apos;s symptoms to any of the possible findings.
+                    </p>
                   </>
                 )}
               </div>
@@ -688,12 +750,32 @@ export function Demo() {
                     </p>
                   </>
                 )}
-                {imageInference && (
+                {imageInference && imageInferenceSorted && (
                   <>
                     <br />
                     <Chart data={imageInference} type="probability" />
-                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How best to interpret this</h4>
-                    <p>lorem ipsum</p>
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">How to interpret this</h4>
+                    <p>
+                      From the given inputs, the model has predicted that patient has &quot;
+                      {categoryToName[imageInferenceSorted[0].label]}.&quot; However the model was only trained on five
+                      possible outcomes and with a limited dataset, so the results may not be accurate.
+                      {imageInferenceSorted[0].probability < 0.6 && (
+                        <>
+                          {' '}
+                          Importantly, the model is not very confident in this prediction. In an actual clinical
+                          setting, the model should only display the top output based on a determined threshold of
+                          likelihood, however for the purposes of this demo, we are showing all results. For similar
+                          reasons, the output of a base model would normally not be shown.
+                        </>
+                      )}
+                    </p>
+                    <br />
+                    <p>
+                      It should also be noted here that the &quot;likelihood&quot; is not a true likelihood of the
+                      patient having this condition, but a relative likelihood compared to the other findings.
+                      Similarly, &quot;no findings&quot; is not a true negative, but scenario where the model could not
+                      match the patient&apos;s symptoms to any of the possible findings.
+                    </p>
                   </>
                 )}
               </div>
