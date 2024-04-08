@@ -4,6 +4,36 @@ title: 'Text Model'
 
 # Text Model
 
-The text model is text classification model designed to process clinician notes and predict the presence of a specific condition. The model is trained on the MIMIC-IV dataset, specifically the notes section regarding the patient's history of present illness. The model itself is a BERT-based model, extending the pretrained model [Bio ClinicalBERT](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT) with a classification layer.
+The text model is an NLP-based multiclass classification system designed specifically for medical text analysis. Its basis is a pre-trained BERT model called [Bio ClinicalBERT](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT), which was trained on all MIMIC-III notes and initialized from [BioBERT](https://arxiv.org/abs/1901.08746). Our model was initialized using Bio_ClinicalBERT, trained on the MIMIC-IV dataset (specifically the section from discharge summaries regarding the patient's history of present illness) and fine-tuned to categorize input texts into one of five distinct classes (findings).
+
+## Model Training
+
+The model workflow can be summarized as follows:
 
 ![example image](/images/nlp_diagram.svg)
+
+### Data Tokenization
+
+To ensure that the model handles data in the format it was trained on, input sentences are tokenized using Bio_ClinicalBERT's tokenizer. 
+- `input_ids`: These represent the input to the model, which consists of tokenized text data. Each input is a single sequence with a length of 512 tokens, which is the maximum sequence length for BERT-based models.
+- `attention_masks`: These are used to determine which tokens should be attended to and which should not (e.g., padding tokens). This allows the model to focus on the important parts of the input sequence.
+- `token_type_ids`: These are used to distinguish different segments within the input, which is especially useful for tasks that involve multiple sequences, like question-answering. In the context of this model, the `token_type_ids` will not be used for the model because the input sequence is not paired (only zeros).
+
+### Feature Extraction
+
+After the inputs are tokenized, they are fed into a neural network, which leverages the pre-trained Bio_ClinicalBERT model for feature extraction.The BERT-based model takes the inputs and outputs a tuple: the last hidden states of the model and the pooled output. For our model we used the pooled output, which is a summary of the input sequence and is typically obtained by applying a pooling operation to the last layer hidden states.
+
+### Classification
+
+The extracted feature is then passed through additional layers to classify the input into one of the predefined categories.
+- **Linear Layer:** Takes the pooled output of the BERT model and applies a linear transformation that maps the high-dimensional BERT features to a smaller feature space.
+- **ReLU Activation Layer:** Applies the ReLU (Rectified Linear Unit) activation function to introduce non-linearity into the model, which allows it to learn more complex patterns. The dimension remains unchanged after this layer.
+- **Dropout Layer:** Implements dropout regularization by randomly setting a proportion of the input units to 0 at each update during training time, which helps prevent overfitting. The dimension remains unchanged.
+- **Linear Layer:** Applies a linear transformation to transform the input dimension to the number of classes (5 classes). This layer is the final classification layer that produces the logits for each class.
+
+The final output of the model is a tensor with dimensions (1, 5), where each of the 5 values corresponds to the model's confidence in each of the classes. After applying a softmax function to this tensor, we obtained the probability distribution over the classes for the input sequence.
+
+## Training Hyperparameters
+
+To fine-tune the pre-trained model, we used a batch size of `16` and a maximum sequence length of `512`. The hyperparameters that resulted on the best performance model were a learning rate of `0.00005` and a dropout probability of `0.3`.
+
