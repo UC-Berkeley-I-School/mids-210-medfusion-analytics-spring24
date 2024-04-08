@@ -4,4 +4,45 @@ title: Data
 
 # Data Page
 
-Data description
+Using the `Hospital Transfers (transfers.csv)`,` Physician Notes (discharge.csv & radiology.csv)`, `Chest XRay Images` and `Chest XRay Matadata (study.csv)`
+
+Along with the `Chest XRay Encoded Pathologies (mimic-cxr-2.0.0-chexpert.csv')` which contains our multilabel target variables. 
+
+# `Hospital Transfers`
+
+For the hospital transfers we preprocessed the datasets by consolidating careunit and events types into a single column to represent the type of care. We consolidated admissions and transfer ID to represent a unique hospital visit. We assigned a sequence number based on the amount of visits and transfers a patient has had. We then calculated the earliest admission and latest discharge times for each visit.
+
+
+# `Chest XRay Encoded Pathologies`
+
+For the `mimic-cxr-2.0.0-chexpert.csv` file we  encoded pathologies for each patient. Filtered the results to only include records with at least one pathology. 
+
+
+# `Chest XRay Metadata`
+
+For the metadata we dropped all duplicate instances of the same study. 
+
+# Merging the datasets
+
+## Merging the `Hospital Transfers` with the `Chest XRay Metadata`
+
+We merged the hospital transfers with the Chest XRay Metadata on the `subject_id` and filtered to identify only rows where Chest XRay date fell within the admission and discharge date range. We then merged this set back to the hospital transfers on the `hosp_transfer_id`  to create a single dataset. Of patients with valid transfers for chest xrays that fell within their hospital visit.
+
+## Merging the `Processed Hospital Transfers` set with the `Chest XRay Encoded Pathologies`
+
+We merged the processed hospital transfers with the Chest XRay Encoded Pathologies on the `subject_id` and `study_id` to create a single dataset. Of patients with valid transfers for chest xrays that fell within their hospital visit and their respective encoded pathologies. Filtering out duplicate studies, studies only originating form the ED and filtering out studies with no pathologies.
+
+## Merging the `Processed Hospital Transfers w/ Pathologies` set with the `Physicians Radiology and Discharge Notes`
+
+We merged the processed hospital transfers including Pathologies with the phyiscian notes on the `subject_id`, `study_id` and `note_hadm_id` to create a single dataset. 
+
+Based on this consolidated dataset we removed any rows with missing values. 
+
+## Explode the Notes Categories from the combindated dataset
+
+We then separated the notes categories found in the physician notes text into individual columns by category.
+
+Then for the history of illness section these paragraph chunks are parsed and cleaned of whitespace to ensure that the text is clean and ready for analysis.
+
+Any records with history of illness less than 30 words are filtered out of the results.
+
