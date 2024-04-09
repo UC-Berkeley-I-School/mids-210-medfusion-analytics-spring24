@@ -516,7 +516,7 @@ export function Demo() {
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="space-y-1">
-            {!fusionInference && <p className="mt-4">Try running the demo!</p>}
+            {!fusionInference && <p className="mb-4">Try running the demo!</p>}
 
             {fusionLoading && <Spinner />}
             {fusionMsg && <div className="mx-auto block w-max">{fusionMsg}</div>}
@@ -588,7 +588,7 @@ export function Demo() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
-                {!tabularInference && <p className="mt-4">Try running the demo!</p>}
+                {!tabularInference && <p className="mb-4">Try running the demo!</p>}
 
                 {tabularLoading && <Spinner />}
                 {tabularMsg && <div className="mx-auto block w-max">{tabularMsg}</div>}
@@ -658,7 +658,7 @@ export function Demo() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
-                {!textInference && <p className="mt-4">Try running the demo!</p>}
+                {!textInference && <p className="mb-4">Try running the demo!</p>}
 
                 {textLoading && <Spinner />}
                 {textMsg && <div className="mx-auto block w-max">{textMsg}</div>}
@@ -725,7 +725,7 @@ export function Demo() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
-                {!imageInference && <p className="mt-4">Try running the demo!</p>}
+                {!imageInference && <p className="mb-4">Try running the demo!</p>}
 
                 {imageLoading && <Spinner />}
                 {imageMsg && <div className="mx-auto block w-max">{imageMsg}</div>}
