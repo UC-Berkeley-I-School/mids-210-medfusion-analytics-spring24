@@ -522,7 +522,6 @@ export function Demo() {
             {fusionMsg && <div className="mx-auto block w-max">{fusionMsg}</div>}
             {fusionInferenceSorted && (
               <>
-                <br />
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                 <p>
                   The model predicts that among the possible findings, the patient has &quot;
@@ -595,7 +594,6 @@ export function Demo() {
                 {tabularTime > 0 && <div className="text-sm hidden">Time taken: {tabularTime}s</div>}
                 {tabularInferenceSorted && (
                   <>
-                    <br />
                     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                     <p>
                       The model predicts that among the possible findings, the patient has &quot;
@@ -665,7 +663,6 @@ export function Demo() {
                 {textTime > 0 && <div className="text-sm hidden">Time taken: {textTime}s</div>}
                 {textInferenceSorted && (
                   <>
-                    <br />
                     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                     <p>
                       The model predicts that among the possible findings, the patient has &quot;
@@ -732,7 +729,6 @@ export function Demo() {
                 {imageTime > 0 && <div className="text-sm hidden">Time taken: {imageTime}s</div>}
                 {imageInferenceSorted && (
                   <>
-                    <br />
                     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                     <p>
                       The model predicts that among the possible findings, the patient has &quot;
