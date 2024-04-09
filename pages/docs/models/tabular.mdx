@@ -4,4 +4,21 @@ title: 'Tabular Model'
 
 # Tabular Model
 
-XGBoost is a highly efficient ensemble of decision trees used to predict classifications, making it ideal for applications like multilabel classification of patient pathologies. It can identify non linear relationships indicative of various diseases, aiding in accurate diagnosis and treatment planning. Integrating XGBoost into a web application allows healthcare providers to input patient information and receive real-time predictions, enhancing decision-making and patient care.
+This section outlines the methodology applied to train the XGBoost Trees:
+
+1. **Data Preprocessing for Optimal Performance:**
+   - **Handling Missing Values:** We ensure the model's robustness by addressing missing values in the dataset. Specifically, missing ordinal data points are substituted with a designated constant value, while missing ratio data are replaced with the dataset's mean. Such steps are crucial for maintaining data integrity.
+   - **Normalization:** To mitigate the influence of outlier values and scale discrepancies, we normalize our dataset by dividing each value by its respective Interquartile Range (IQR). This scaling method improves model sensitivity and accuracy.
+
+2. **Strategic Model Training with XGBoost:**
+   - **Adopting XGBoost:** Leveraging the powerful XGBoost algorithm, the tabular model component is trained to predict multiple outcomes simultaneously. XGBoost is chosen for its efficiency and effectiveness in handling tabular data.
+   - **Cross-Validation Technique:** We employ a stratified cross-validation strategy with 5 splits and 2 repeats, resulting in 10 distinct training and validation cycles. This approach ensures that each fold maintains a consistent distribution of classes, enhancing the model's generalizability.
+
+3. **Hyperparameter Optimization:**
+   - **Grid Search Methodology:** To fine-tune the model, we execute a grid search to identify the optimal combination of hyperparameters. This process led to identifying a max depth of 1 and n_estimators of 320 as part of the best-performing model setup, with an initial AUC score of approximately 0.6024.
+
+4. **Model Enhancement and Validation:**
+   - **Refinement with Optimal Parameters:** Using the insights gained from the grid search, we recalibrate the model with the identified optimal parameters. When retrained on the dataset, this refined model exhibits a substantial improvement, achieving an AUC score of 0.6655, signifying a notable enhancement in predictive capability.
+
+
+ This approach ensures that the tabular model not only complements the broader fusion model but also stands as a robust predictive tool in its own right, capable of delivering accurate and reliable insights from structured data.
