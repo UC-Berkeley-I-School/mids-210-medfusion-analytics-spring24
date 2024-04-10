@@ -525,7 +525,7 @@ export function Demo() {
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                 <p>
                   The model predicts that among the possible findings, the patient has &quot;
-                  {categoryToName[fusionInferenceSorted[0].label]}&quot; with a relative likelihood of{' '}
+                  <strong>{categoryToName[fusionInferenceSorted[0].label]}</strong>&quot; with a relative likelihood of{' '}
                   {(fusionInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as
                   follows:{' '}
                   {fusionInferenceSorted
@@ -597,9 +597,9 @@ export function Demo() {
                     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                     <p>
                       The model predicts that among the possible findings, the patient has &quot;
-                      {categoryToName[tabularInferenceSorted[0].label]}&quot; with a relative likelihood of{' '}
-                      {(tabularInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
-                      follows:{' '}
+                      <strong>{categoryToName[tabularInferenceSorted[0].label]}</strong>
+                      &quot; with a relative likelihood of {(tabularInferenceSorted[0].probability * 100).toFixed(1)}%.
+                      The other finding predictions are as follows:{' '}
                       {tabularInferenceSorted
                         .slice(1)
                         .map((d) => `${categoryToName[d.label]} (${(d.probability * 100).toFixed(1)}%)`)
@@ -668,8 +668,8 @@ export function Demo() {
                     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                     <p>
                       The model predicts that among the possible findings, the patient has &quot;
-                      {categoryToName[textInferenceSorted[0].label]}&quot; with a relative likelihood of{' '}
-                      {(textInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
+                      <strong>{categoryToName[textInferenceSorted[0].label]}</strong>&quot; with a relative likelihood
+                      of {(textInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
                       follows:{' '}
                       {textInferenceSorted
                         .slice(1)
@@ -734,8 +734,8 @@ export function Demo() {
                     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                     <p>
                       The model predicts that among the possible findings, the patient has &quot;
-                      {categoryToName[imageInferenceSorted[0].label]}&quot; with a relative likelihood of{' '}
-                      {(imageInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
+                      <strong>{categoryToName[imageInferenceSorted[0].label]}</strong>&quot; with a relative likelihood
+                      of {(imageInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
                       follows:{' '}
                       {imageInferenceSorted
                         .slice(1)
