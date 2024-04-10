@@ -525,7 +525,7 @@ export function Demo() {
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                 <p>
                   The model predicts that among the possible findings, the patient has &quot;
-                  {categoryToName[fusionInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                  {categoryToName[fusionInferenceSorted[0].label]}&quot; with a relative likelihood of{' '}
                   {(fusionInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as
                   follows:{' '}
                   {fusionInferenceSorted
@@ -547,9 +547,9 @@ export function Demo() {
                   {fusionInferenceSorted[0].probability < 0.6 && (
                     <>
                       {' '}
-                      Importantly, the model is not very confident in this prediction. In an actual clinical setting,
-                      the model should only display the top output based on a determined threshold of likelihood,
-                      however for the purposes of this demo, we are showing all results.
+                      Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
+                      clinical setting, the model should only display the top output based on a determined threshold of
+                      likelihood, however for the purposes of this demo, we are showing all results.
                     </>
                   )}
                 </p>
@@ -597,7 +597,7 @@ export function Demo() {
                     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                     <p>
                       The model predicts that among the possible findings, the patient has &quot;
-                      {categoryToName[tabularInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                      {categoryToName[tabularInferenceSorted[0].label]}&quot; with a relative likelihood of{' '}
                       {(tabularInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
                       follows:{' '}
                       {tabularInferenceSorted
@@ -619,9 +619,9 @@ export function Demo() {
                       {tabularInferenceSorted[0].probability < 0.6 && (
                         <>
                           {' '}
-                          Importantly, the model is not very confident in this prediction. In an actual clinical
-                          setting, the model should only display the top output based on a determined threshold of
-                          likelihood, however for the purposes of this demo, we are showing all results. For similar
+                          Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
+                          clinical setting, the model should only display the top output based on a determined threshold
+                          of likelihood, however for the purposes of this demo, we are showing all results. For similar
                           reasons, the output of a base model would normally not be shown.
                         </>
                       )}
@@ -631,10 +631,12 @@ export function Demo() {
                       As a tabular model trained on only eight inputs, attempting to determine five possible outcomes,
                       this model is not very accurate. In a clinical setting, the model would be trained on hundreds of
                       inputs and thousands of samples, improving its accuracy. However, for the purposes of this demo,
-                      we are showing the results of the model. At best, this model would probably only determine if the
-                      patient&apos;s condition deviate from the norm, warranting further investigation. It is with this
-                      mindset we included it as part of the fusion model so that it could possibly provide additional
-                      information to the overall prediction.
+                      we are showing the results of the model. Another point to note is that some conditions are more
+                      symptomatic than others, making this model perform better or worse depending on the finding.
+                      Regardless, this model has provided valuable predictions at a comparatively lower complexity, and
+                      can be used to better identify certain conditions. It is with this mindset we included it as part
+                      of the fusion model so that it could possibly provide additional information to the overall
+                      prediction.
                     </p>
                   </>
                 )}
@@ -666,7 +668,7 @@ export function Demo() {
                     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                     <p>
                       The model predicts that among the possible findings, the patient has &quot;
-                      {categoryToName[textInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                      {categoryToName[textInferenceSorted[0].label]}&quot; with a relative likelihood of{' '}
                       {(textInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
                       follows:{' '}
                       {textInferenceSorted
@@ -688,9 +690,9 @@ export function Demo() {
                       {textInferenceSorted[0].probability < 0.6 && (
                         <>
                           {' '}
-                          Importantly, the model is not very confident in this prediction. In an actual clinical
-                          setting, the model should only display the top output based on a determined threshold of
-                          likelihood, however for the purposes of this demo, we are showing all results. For similar
+                          Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
+                          clinical setting, the model should only display the top output based on a determined threshold
+                          of likelihood, however for the purposes of this demo, we are showing all results. For similar
                           reasons, the output of a base model would normally not be shown.
                         </>
                       )}
@@ -732,7 +734,7 @@ export function Demo() {
                     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Results</h4>
                     <p>
                       The model predicts that among the possible findings, the patient has &quot;
-                      {categoryToName[imageInferenceSorted[0].label]}&quot; with a relative probability of{' '}
+                      {categoryToName[imageInferenceSorted[0].label]}&quot; with a relative likelihood of{' '}
                       {(imageInferenceSorted[0].probability * 100).toFixed(1)}%. The other finding predictions are as{' '}
                       follows:{' '}
                       {imageInferenceSorted
@@ -754,9 +756,9 @@ export function Demo() {
                       {imageInferenceSorted[0].probability < 0.6 && (
                         <>
                           {' '}
-                          Importantly, the model is not very confident in this prediction. In an actual clinical
-                          setting, the model should only display the top output based on a determined threshold of
-                          likelihood, however for the purposes of this demo, we are showing all results. For similar
+                          Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
+                          clinical setting, the model should only display the top output based on a determined threshold
+                          of likelihood, however for the purposes of this demo, we are showing all results. For similar
                           reasons, the output of a base model would normally not be shown.
                         </>
                       )}

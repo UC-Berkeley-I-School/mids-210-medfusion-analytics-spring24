@@ -15,7 +15,14 @@ const Chart: React.FC<{ data: InferenceDatum[]; type: 'probability' | 'odds_rati
     const format = d3.format('.1%');
 
     const plot = Plot.plot({
-      x: { axis: 'top', percent: true, grid: true, label: 'Likelihood (%)', nice: true },
+      x: {
+        axis: 'top',
+        percent: true,
+        grid: true,
+        label: 'Likelihood (%)',
+        nice: true,
+        domain: [0, Math.max(60, d3.max(data, (d) => d[type])! * 100)],
+      },
       y: {
         label: null,
         tickFormat: (d: string) => categoryToName[d],
