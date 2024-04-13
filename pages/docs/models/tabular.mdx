@@ -6,17 +6,17 @@ title: 'Tabular Model'
 
 This section describes the methodology for training the XGBoost model:
 
-1. **Data Preprocessing:**
+## 1. **Data Preprocessing:**
    - **Missing Values:** Missing ordinal values are replaced with a fixed value, and missing ratio values are filled with the mean. Data is normalized by dividing by the Interquartile Range (IQR).
 
-2. **Model Training with XGBoost:**
+## 2. **Model Training with XGBoost:**
    - **Algorithm Selection:** XGBoost is chosen for its efficiency with tabular data, predicting multiple labels.
    - **Cross-Validation:** Stratified cross-validation with 5 splits and 2 repeats ensures class distribution consistency across folds.
 
-3. **Hyperparameter Optimization:**
+## 3. **Hyperparameter Optimization:**
    - **Grid Search:** Identifies optimal model settings, finding a configuration with a max depth of 1 and n_estimators of 320 leading to an initial AUC score of approximately 0.6024.
 
-4. **Model Enhancement:**
+## 4. **Model Enhancement:**
    - **Parameter Refinement:** Adjusting the model with the best-found parameters improved the AUC score to 0.6655.
 
 The predefined columns for data types include ordinal columns like 'pain' and 'acuity', and ratio columns such as 'temperature' and 'heartrate'. The preprocessing pipeline utilizes simple imputation for missing values and robust scaling for normalization. Cross-validation options are specified with various splits and repeats to suit different validation strategies. The initial and updated XGBoost classifier settings reflect the selected hyperparameters from the optimization process, indicating the adjustments made to improve model performance. The final setup integrates these components into a pipeline for efficient data processing and model training.
