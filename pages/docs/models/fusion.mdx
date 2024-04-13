@@ -1,7 +1,37 @@
 ---
-title: Fusion Model
+title: 'Fusion Model'
 ---
 
 # Fusion Model
 
-Our fusion model integrates diverse data sources and model predictions to enhance diagnostic accuracy for rare diseases in chest X-ray images. Early Fusion 1a combines raw tabular data, textual notes, and X-ray images at the input level to feed a singular model, leveraging intact features and probabilities extracted from both NLP and Computer Vision (CV) models. Early Fusion 1b follows a similar approach but uses extracted probabilities from NLP and CV models as input. In contrast, Early Fusion 2 takes a hybrid approach, fusing embeddings from the NLP model and extracted features from the CV model with intact tabular data, offering a more nuanced combination of features for the final model to process. This composite approach aims to utilize the strengths of each modality—textual context from notes, visual patterns from images, and structured data insights—ensuring a comprehensive evaluation of patient data for the web application, thus providing a robust tool for healthcare professionals in diagnosing complex pathologies.
+Our Early Fusion Model integrates diverse data types using separate architectures that are optimized for each data modality and then combined into a final model that makes the overall prediction. By using diverse data types, our model gets a holistic view of the subject, which is particularly valuable in complex fields like healthcare.
+
+## Model Training
+
+The model workflow can be summarized as follows:
+
+![fusion image](/images/early_fusion_diagram.png)
+
+### Data Inputs
+
+The model takes the following inputs:
+- `Tabular Data`: Structured data with rows and columns, including patient’s data and vital signs.
+- `Text Data`: Unstructured text data from clinical notes.
+- `Image Data`: Imaging data in the form of chest x-rays.
+
+### Individual Model Training
+
+Both the text and image data are processed by a model that is best suited for that particular type. 
+
+Text Model: The text model is an NLP-based multiclass classification system designed specifically for medical text analysis. Its basis is a pre-trained BERT model called [Bio ClinicalBERT](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT), which was trained on all MIMIC-III notes and initialized from [BioBERT](https://arxiv.org/abs/1901.08746).
+Image Model: The image model is a scaling method for convolutional neural networks (CNNs) that uniformly scales all dimensions of depth/width/resolution. For our model, we used EfficientNet-B3, which is a specific version of EfficientNet that has been pre-trained on a large dataset of images. 
+
+### Fusion Model Inputs 
+
+The outputs of the text and image models are a set of probabilities or a feature vector (5 features) that indicates its predictions. In the context of classification, these probabilities would represent the likelihood of each class being the correct one. These outputs and the original tabular data (8 features) are then combined (concatenated) to serve as inputs for the fusion model (total of 18 features).
+
+### Fusion Model Training
+
+An XGBoost model processes the fused inputs and makes the final prediction to categorize the input data into one of the five distinct classes (findings). The final output of the model is a tensor with dimensions (1, 5), where each of the 5 values corresponds to the model's confidence in each of the classes. After applying a softmax function to this tensor, we obtained the probability distribution over the classes for the input sequence.
+
+This final prediction is expected to be more accurate than any individual model's prediction since it can capture patterns that are not visible when data sources are used in isolation.
