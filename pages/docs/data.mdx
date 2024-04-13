@@ -1,40 +1,48 @@
 ---
-title: Data
+title: Data & Preprocessing
 ---
 
-# Data Page
+# Data & Preprocessing
 
-This section details the steps taken to preprocess and consolidate various datasets for analysis. Our primary data sources include `Hospital Transfers`, `Physician Notes`, `Chest XRay Images`, `Chest XRay Metadata`, and `Chest XRay Encoded Pathologies`, which contain multilabel target variables.
+The data uses the [MIMIC-IV dataset](https://physionet.org/content/mimiciv/2.2/), a open source dataset of de-identified health data from patients admitted to the Beth Israel Deaconess Medical Center (BIDMC).
+In particular, we selected data from the `mimic-cxr` and `mimic-iv` tables to create a dataset that includes patient physiology measurements, chest x-ray images, chest x-ray encoded pathologies, and physician notes.
+The MIMIC-IV dataset, which is managed by MIT, has a well documented schema and is widely used in the medical research community.
 
-## Hospital Transfers
+The following describes the steps taken to preprocess and consolidate various datasets for analysis. Our primary data sources include `Hospital Transfers`, `Physician Notes`, `Chest XRay Images`, `Chest XRay Metadata`, and `Chest XRay Encoded Pathologies`, which contain multilabel target variables.
 
-- Consolidation: Merged `careunit` and `event types` into a single column for care type, combined `admissions` and `transfer IDs` to denote unique hospital visits.
-- Sequencing: Assigned sequence numbers to visits and transfers per patient, calculated the earliest admission and the latest discharge times.
+- Hospital Transfers
 
-## Chest XRay Encoded Pathologies
+  - Consolidation: Merged `careunit` and `event types` into a single column for care type, combined `admissions` and `transfer IDs` to denote unique hospital visits.
+  - Sequencing: Assigned sequence numbers to visits and transfers per patient, calculated the earliest admission and the latest discharge times.
 
-- Pathology Encoding: Processed the `mimic-cxr-2.0.0-chexpert.csv` to encode pathologies for each patient, retaining only records with one or more pathologies.
+- Chest XRay Encoded Pathologies
 
-## Chest XRay Metadata
+  - Pathology Encoding: Processed the `mimic-cxr-2.0.0-chexpert.csv` to encode pathologies for each patient, retaining only records with one or more pathologies.
 
-- Deduplication: Removed duplicate instances within the `study.csv` to ensure unique study records.
+- Chest XRay Metadata
+  - Deduplication: Removed duplicate instances within the `study.csv` to ensure unique study records.
 
 ## Dataset Merging
 
-### Hospital Transfers and Chest XRay Metadata
+- Hospital Transfers and Chest XRay Metadata
 
-- Merged on `subject_id`, filtering for XRay dates between the admission and discharge dates, then re-merged to the hospital transfers using `hosp_transfer_id`.
+  - Merged on `subject_id`, filtering for XRay dates between the admission and discharge dates, then re-merged to the hospital transfers using `hosp_transfer_id`.
 
-### Processed Hospital Transfers and Chest XRay Encoded Pathologies
+- Processed Hospital Transfers and Chest XRay Encoded Pathologies
 
-- Combined using `subject_id` and `study_id`, filtering out duplicate studies, those originating from the ED, and studies without pathologies.
+  - Combined using `subject_id` and `study_id`, filtering out duplicate studies, those originating from the ED, and studies without pathologies.
 
-### Including Physician Notes
+- Including Physician Notes
 
-- Integrated physician notes (radiology and discharge) using `subject_id`, `study_id`, and `note_hadm_id`, removing any records with missing data.
+  - Integrated physician notes (radiology and discharge) using `subject_id`, `study_id`, and `note_hadm_id`, removing any records with missing data.
 
-### Notes Categorization and Cleanup
-
-- Segregated notes into individual categories, parsing the history of illness sections for cleanliness and relevance, excluding records with histories shorter than 30 words.
+- Notes Categorization and Cleanup
+  - Segregated notes into individual categories, parsing the history of illness sections for cleanliness and relevance, excluding records with histories shorter than 30 words.
 
 This structured approach ensures a comprehensive dataset ready for analysis, with specific attention to encoding, merging, and cleaning to support accurate and meaningful insights.
+
+## Refining the Dataset
+
+Originally, the dataset contained 8 different pathologies, but we decided to focus on the top 5 most common pathologies: `Atelectasis`, `Cardiomegaly`, `Pleural Effusion`, `Lung Opacity`, and `No Finding`.
+We then encoded these pathologies as binary labels for each patient, with `1` indicating the presence of the pathology and `0` indicating the absence.
+We further balanced the dataset by oversampling the minority classes and undersampling the majority class to ensure that the models had a better chance learning the specific features of each pathology.

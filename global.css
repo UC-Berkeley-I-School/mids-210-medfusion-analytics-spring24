@@ -74,4 +74,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  li>ul {
+    @apply !mt-0;
+  }
 }
