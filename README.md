@@ -10,7 +10,7 @@ Website code for UC Berkeley MIDS Medical Multi Modal Models Capstone Project Sp
 >
 > Authors: A Adam Saleh, Carolyn Dunlap, Cinthya Rosales, Esteban Valenzuela, Lee Gary, Steven Chang
 
-[Models Repo](https://github.com/UC-Berkeley-I-School/mids-210-medfusion-analytics-spring24)
+[Models Repo](https://github.com/UC-Berkeley-I-School/mids-210-radiology-triage-models-spring24)
 
 Supports the [Commonmark markdown standard](https://commonmark.org/help/)
 
