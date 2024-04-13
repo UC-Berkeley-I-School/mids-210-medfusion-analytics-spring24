@@ -431,21 +431,16 @@ export function Demo() {
             Input some data and the AI model will predict one of five possible outcomes (atelectasis, cardiomegaly,
             pleural effusion, lung opacity, or no finding).
           </CardDescription>
-          <CardDescription>
+          <div className="text-sm text-muted-foreground">
             Example patients:
-            <Button variant="ghost" onClick={() => loadPreset(0)}>
-              Patient A
-            </Button>
-            <Button variant="ghost" onClick={() => loadPreset(1)}>
-              Patient B
-            </Button>
-            <Button variant="ghost" onClick={() => loadPreset(2)}>
-              Patient C
-            </Button>
-            <Button variant="ghost" onClick={() => loadPreset(3)}>
-              Patient D
-            </Button>
-          </CardDescription>
+            <div className="flex flex-wrap flex-row">
+              {presets.map((d, i) => (
+                <Button key={i} variant="ghost" size="sm" onClick={() => loadPreset(i)}>
+                  {d.name}
+                </Button>
+              ))}
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <Form {...form}>

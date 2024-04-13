@@ -24,6 +24,7 @@ export const categoryColors: { [index: string]: string; } = {
 
 export const presets = [
   {
+    name: "Patient A (Atelectasis)",
     patient_id: 12362515,
     temperature: 100.3,
     heartrate: 148.0,
@@ -37,6 +38,7 @@ export const presets = [
     image: "/mids-210-medfusion-analytics-spring24/data/4eaea495-116e27f8-cb8820c6-b3ce0144-c8db0e28.jpg"
   },
   {
+    name: "Patient B (Cardiomegaly)",
     patient_id: 14019365,
     temperature: 98.2,
     heartrate: 58.0,
@@ -50,6 +52,7 @@ export const presets = [
     image: "/mids-210-medfusion-analytics-spring24/data/cd3d501b-de63e62b-5e47a192-fbb079f6-e77c266a.jpg"
   },
   {
+    name: "Patient C (Pleural Effusion)",
     patient_id: 16861916,
     temperature: 97.4,
     heartrate: 49.0,
@@ -63,6 +66,7 @@ export const presets = [
     image: "/mids-210-medfusion-analytics-spring24/data/02c6e4a9-144b7d90-fdbbb221-1b40fd43-ba173a86_min.jpg"
   },
   {
+    name: "Patient D (Pleural Effusion)",
     patient_id: 12117907,
     temperature: 98.8,
     heartrate: 111.0,
@@ -74,6 +78,45 @@ export const presets = [
     acuity: 2.0,
     history_of_present_illness: 'Mr. ___ is a ___ gentleman, prior smoker, with recently diagnosed lung ca (metastatic lung ca diagnosed from pleural fluid ___ who is being admitted for an expedited work up of his underlying malignancy. He is being followed by the Interventional Pulmonologists and was seen in clinic on ___ with discussion regarding potential thoracoscopy, pleural catheter drainage, and pleurodesis. He recently had a MRI head on ___ which demonstrated multiple brain mets with surrounding vasogenic edema consistent with metastatic disease. As a result, Mr. ___ was encouraged to come to the ED for further workup. Patient reports no new change in symptoms, has some difficulty breathing but no chest pain. Denies any headache, peripheral numbness or weakness, change in sensation, blurry or double vision. No nausea, vomiting, or abdominal pain.',
     image: "/mids-210-medfusion-analytics-spring24/data/8606e522-c1f6b6c7-bccfccea-a98f219b-8b81176e_min.jpg",
+  },
+  {
+    name: "Patient E (Cardiomegaly)",
+    temperature: 97.3,
+    heartrate: 70,
+    resprate: 25,
+    o2sat: 98,
+    sbp: 204,
+    dbp: 73,
+    pain: 0,
+    acuity: 2,
+    history_of_present_illness: 'Pt complained of shortness of breath after waking up or lying down and dizziness. Family history of hypertension. Swelling in lower extremities. Arrhythmia observed when heart rate taken.',
+    image: "/mids-210-medfusion-analytics-spring24/data/cardiomegaly-3.jpeg",
+  },
+  {
+    name: "Patient F (Pleural Effusion)",
+    temperature: 100.4,
+    heartrate: 98,
+    resprate: 29,
+    o2sat: 96,
+    sbp: 132,
+    dbp: 73,
+    pain: 5,
+    acuity: 2,
+    history_of_present_illness: 'Pt presented with fever, chest pain, and hiccups. Breathing rapidly and appeared short of breath. Patient has type II diabetes. Family history of kidney disease.',
+    image: "/mids-210-medfusion-analytics-spring24/data/f69b9ba15aa08e02024c4dc168ab80aa0dfc09c8bde1662cd7ce62d13c7b016d_big_gallery.png",
+  },
+  {
+    name: "Patient G (Lung Opacity)",
+    temperature: 98.4,
+    heartrate: 148,
+    resprate: 26,
+    o2sat: 92,
+    sbp: 154,
+    dbp: 84,
+    pain: 5,
+    acuity: 2,
+    history_of_present_illness: '25-year old man presented with complaints of chest pain, short- ness of breath and occasional haemoptysis of 8-month duration. He also had a history of treated pulmonary tuberculosis.',
+    image: "/mids-210-medfusion-analytics-spring24/data/Chest-X-ray-showing-right-lung-opacity.png"
   }
 ];
 
