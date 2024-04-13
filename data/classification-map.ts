@@ -53,20 +53,6 @@ export const presets = [
   },
   {
     name: "Patient C (Pleural Effusion)",
-    patient_id: 16861916,
-    temperature: 97.4,
-    heartrate: 49.0,
-    resprate: 16.0,
-    o2sat: 94.0,
-    sbp: 159.0,
-    dbp: 59.0,
-    pain: 6,
-    acuity: 2.0,
-    history_of_present_illness: 'Ms. ___ is a ___ y/o female with a past medical history of HTN, HLD, hypothyroidism, asthma, and diastolic CHF who presents with a 1 week history of DOE, cough, and ___ swelling (R>L). Patient was in her usual state of health until about 1 week ago at which point she developed dyspnea on exertion. Per the family, patient is extremely active. She is able to go to church regularly, walk up and down stairs, and perform daily ADLs. She lives with her son, daughter-in-law, and grandaughter. Last week she was downstairs and was more short of breath when walking up stairs. She denied any CP, palpitations, diaphoresis. Throughout the week, she developed a nonproductive cough, wheezes, and lower extremity swelling in her right leg. Endorses orthopnea. Denies any change in pillow quantity at night, denies PND. Denies h/o DVT or PE, recent surgeries/travel, hemoptysis. Denies fevers, chills, nausea, vomiting, diarhea, dysuria. Has not been using her albuterol inhaler more frequently. Family was concerned about her symptoms and the possibility of a DVT, and thus she was sent to the ED. In the ED, VS T 97.4, HR 49, BP 159/59, RR 16, sats 94-99% RA. WBC 8.2. BNP 229. Troponin negative x1. Right ___ doppler was negative. CXR with small bilateral pleural effusions.   On the floor, T 97.8, BP 182/61, HR 49, RR 22, 94% RA. Patient was without complaints, sitting comfortably in bed in no respiratory distress.',
-    image: "/mids-210-medfusion-analytics-spring24/data/02c6e4a9-144b7d90-fdbbb221-1b40fd43-ba173a86_min.jpg"
-  },
-  {
-    name: "Patient D (Pleural Effusion)",
     patient_id: 12117907,
     temperature: 98.8,
     heartrate: 111.0,
@@ -80,7 +66,7 @@ export const presets = [
     image: "/mids-210-medfusion-analytics-spring24/data/8606e522-c1f6b6c7-bccfccea-a98f219b-8b81176e_min.jpg",
   },
   {
-    name: "Patient E (Cardiomegaly)",
+    name: "Patient D (Cardiomegaly)",
     temperature: 97.3,
     heartrate: 70,
     resprate: 25,
@@ -93,7 +79,7 @@ export const presets = [
     image: "/mids-210-medfusion-analytics-spring24/data/cardiomegaly-3.jpeg",
   },
   {
-    name: "Patient F (Pleural Effusion)",
+    name: "Patient E (Pleural Effusion)",
     temperature: 100.4,
     heartrate: 98,
     resprate: 29,
@@ -106,7 +92,7 @@ export const presets = [
     image: "/mids-210-medfusion-analytics-spring24/data/f69b9ba15aa08e02024c4dc168ab80aa0dfc09c8bde1662cd7ce62d13c7b016d_big_gallery.png",
   },
   {
-    name: "Patient G (Lung Opacity)",
+    name: "Patient F (Lung Opacity)",
     temperature: 98.4,
     heartrate: 148,
     resprate: 26,
