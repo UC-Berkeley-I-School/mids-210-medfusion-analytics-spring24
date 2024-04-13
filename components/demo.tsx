@@ -585,15 +585,14 @@ export function Demo() {
                 From the given inputs, the model has predicted that patient has &quot;
                 {categoryToName[fusionInferenceSorted[0].label]}.&quot; However the model was only trained on five
                 possible outcomes and with a limited dataset, so the results may not be accurate.
-                {fusionInferenceSorted[0].probability < 0.6 && (
-                  <>
-                    {' '}
-                    Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
-                    clinical setting, the model should only display the top output based on a determined threshold of
-                    likelihood, however for the purposes of this demo, we are showing all results.
-                  </>
-                )}
               </p>
+              {fusionInferenceSorted[0].probability < 0.6 && (
+                <p className="mb-2">
+                  Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
+                  clinical setting, the model should only display the top output based on a determined threshold of
+                  likelihood, however for the purposes of this demo, we are showing all results.
+                </p>
+              )}
               <p className="mb-2">
                 It should also be noted here that the &quot;likelihood&quot; is not a true likelihood of the patient
                 having this condition, but a relative likelihood compared to the other findings. Similarly, &quot;no
@@ -649,16 +648,15 @@ export function Demo() {
                     From the given inputs, the model has predicted that patient has &quot;
                     {categoryToName[tabularInferenceSorted[0].label]}.&quot; However the model was only trained on five
                     possible outcomes and with a limited dataset, so the results may not be accurate.
-                    {tabularInferenceSorted[0].probability < 0.6 && (
-                      <>
-                        {' '}
-                        Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
-                        clinical setting, the model should only display the top output based on a determined threshold
-                        of likelihood, however for the purposes of this demo, we are showing all results. For similar
-                        reasons, the output of a base model would normally not be shown.
-                      </>
-                    )}
                   </p>
+                  {tabularInferenceSorted[0].probability < 0.6 && (
+                    <p className="mb-2">
+                      Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
+                      clinical setting, the model should only display the top output based on a determined threshold of
+                      likelihood, however for the purposes of this demo, we are showing all results. For similar
+                      reasons, the output of a base model would normally not be shown.
+                    </p>
+                  )}
                   <p className="mb-2">
                     As a tabular model trained on only eight inputs, attempting to determine five possible outcomes,
                     this model is not very accurate. In a clinical setting, the model would be trained on hundreds of
@@ -710,16 +708,15 @@ export function Demo() {
                     From the given inputs, the model has predicted that patient has &quot;
                     {categoryToName[textInferenceSorted[0].label]}.&quot; However the model was only trained on five
                     possible outcomes and with a limited dataset, so the results may not be accurate.
-                    {textInferenceSorted[0].probability < 0.6 && (
-                      <>
-                        {' '}
-                        Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
-                        clinical setting, the model should only display the top output based on a determined threshold
-                        of likelihood, however for the purposes of this demo, we are showing all results. For similar
-                        reasons, the output of a base model would normally not be shown.
-                      </>
-                    )}
                   </p>
+                  {textInferenceSorted[0].probability < 0.6 && (
+                    <p className="mb-2">
+                      Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
+                      clinical setting, the model should only display the top output based on a determined threshold of
+                      likelihood, however for the purposes of this demo, we are showing all results. For similar
+                      reasons, the output of a base model would normally not be shown.
+                    </p>
+                  )}
                   <p className="mb-2">
                     It should also be noted here that the &quot;likelihood&quot; is not a true likelihood of the patient
                     having this condition, but a relative likelihood compared to the other findings. Similarly, &quot;no
@@ -767,16 +764,15 @@ export function Demo() {
                     From the given inputs, the model has predicted that patient has &quot;
                     {categoryToName[imageInferenceSorted[0].label]}.&quot; However the model was only trained on five
                     possible outcomes and with a limited dataset, so the results may not be accurate.
-                    {imageInferenceSorted[0].probability < 0.6 && (
-                      <>
-                        {' '}
-                        Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
-                        clinical setting, the model should only display the top output based on a determined threshold
-                        of likelihood, however for the purposes of this demo, we are showing all results. For similar
-                        reasons, the output of a base model would normally not be shown.
-                      </>
-                    )}
                   </p>
+                  {imageInferenceSorted[0].probability < 0.6 && (
+                    <p className="mb-2">
+                      Importantly, the model is <strong>not very confident</strong> in this prediction. In an actual
+                      clinical setting, the model should only display the top output based on a determined threshold of
+                      likelihood, however for the purposes of this demo, we are showing all results. For similar
+                      reasons, the output of a base model would normally not be shown.
+                    </p>
+                  )}
                   <p className="mb-2">
                     It should also be noted here that the &quot;likelihood&quot; is not a true likelihood of the patient
                     having this condition, but a relative likelihood compared to the other findings. Similarly, &quot;no
