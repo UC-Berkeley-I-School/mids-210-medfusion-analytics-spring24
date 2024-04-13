@@ -427,10 +427,9 @@ export function Demo() {
       <Card className="w-auto">
         <CardHeader>
           <CardTitle>MedFusion Analytics Demo</CardTitle>
-          <CardDescription>
-            Input some data and the AI model will predict one of five possible outcomes (atelectasis, cardiomegaly,
-            pleural effusion, lung opacity, or no finding).
-          </CardDescription>
+          {/* <CardDescription>
+
+          </CardDescription> */}
           <div className="text-sm text-muted-foreground">
             Example patients:
             <div className="flex flex-wrap flex-row">
