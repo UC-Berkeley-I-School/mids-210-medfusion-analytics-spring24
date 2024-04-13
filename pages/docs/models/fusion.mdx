@@ -15,16 +15,16 @@ The model workflow can be summarized as follows:
 ### Data Inputs
 
 The model takes the following inputs:
-- `Tabular Data`: Structured data with rows and columns, including patient’s data and vital signs.
-- `Text Data`: Unstructured text data from clinical notes.
-- `Image Data`: Imaging data in the form of chest x-rays.
+- **Tabular Data:** Structured data with rows and columns, including patient’s data and vital signs.
+- **Text Data:** Unstructured text data from clinical notes.
+- **Image Data:** Imaging data in the form of chest x-rays.
 
 ### Individual Model Training
 
 Both the text and image data are processed by a model that is best suited for that particular type. 
 
-Text Model: The text model is an NLP-based multiclass classification system designed specifically for medical text analysis. Its basis is a pre-trained BERT model called [Bio ClinicalBERT](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT), which was trained on all MIMIC-III notes and initialized from [BioBERT](https://arxiv.org/abs/1901.08746).
-Image Model: The image model is a scaling method for convolutional neural networks (CNNs) that uniformly scales all dimensions of depth/width/resolution. For our model, we used EfficientNet-B3, which is a specific version of EfficientNet that has been pre-trained on a large dataset of images. 
+- **Text Model:** The text model is an NLP-based multiclass classification system designed specifically for medical text analysis. Its basis is a pre-trained BERT model called [Bio ClinicalBERT](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT), which was trained on all MIMIC-III notes and initialized from [BioBERT](https://arxiv.org/abs/1901.08746).
+- **Image Model:** The image model is a scaling method for convolutional neural networks (CNNs) that uniformly scales all dimensions of depth/width/resolution. For our model, we used EfficientNet-B3, which is a specific version of EfficientNet that has been pre-trained on a large dataset of images. 
 
 ### Fusion Model Inputs 
 
