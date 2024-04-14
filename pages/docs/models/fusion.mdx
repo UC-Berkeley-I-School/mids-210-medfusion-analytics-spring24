@@ -4,9 +4,11 @@ title: 'Fusion Model'
 
 # Fusion Model
 
-Our Early Fusion Model integrates diverse data types using separate architectures that are optimized for each data modality and then combined into a final model that makes the overall prediction. By using diverse data types, our model gets a holistic view of the subject, which is particularly valuable in complex fields like healthcare.
+## Overview
 
-## Model Training
+The Early Fusion Model integrates diverse data types using separate architectures optimized for each modality and combines them into a final model for overall prediction. This holistic approach is particularly valuable for our project, where integrating structured data, text, and images can provide a comprehensive understanding of patient conditions.
+
+## Model Workflow
 
 The model workflow can be summarized as follows:
 
@@ -32,6 +34,36 @@ The outputs of the text and image models are a set of probabilities or a feature
 
 ### Fusion Model Training
 
-An XGBoost model processes the fused inputs and makes the final prediction to categorize the input data into one of the five distinct classes (findings). The final output of the model is a tensor with dimensions (1, 5), where each of the 5 values corresponds to the model's confidence in each of the classes. After applying a softmax function to this tensor, we obtained the probability distribution over the classes for the input sequence.
+1. Data Preparation
+    - The fusion model leverages 18 features compiled from the individual models' outputs and the tabular data. The target for these inputs is a multi-class diagnosis, categorized into one of five classes.
 
-This final prediction is expected to be more accurate than any individual model's prediction since it can capture patterns that are not visible when data sources are used in isolation.
+2. Choosing a Base Model
+    - A basic XGBoost model is selected for its effectiveness in handling diverse datasets and its robustness in classification tasks.
+
+3. Cross-Validation Methodology
+    - K-Fold Cross-Validation: To ensure the model's robustness and generalizability, k-fold cross-validation is implemented. This technique enhances validation accuracy and reduces the risk of model overfitting.
+
+4. Hyperparameter Tuning
+    - Through systematic grid search, multiple combinations of XGBoost parameters (e.g., learning rate, max depth, and number of trees) are tested to identify the optimal settings.
+
+5. Performance Evaluation
+    - The model's effectiveness is measured using Negative Log Loss and AUC metrics. These metrics assess the model’s ability to accurately classify and differentiate between the diagnosis classes.
+
+6. Model Selection and Final Testing
+    - The final model is chosen based on the best average performance across all cross-validation folds.
+    - An independent test set is used to validate the model's real-world applicability and to assess its generalization capability.
+
+### Fusion Model Prediction
+1. Input Data Preparation
+    - When new data is received, it is prepared and formatted to ensure it aligns with the model’s requirements, maintaining the structure of the 18-feature input.
+
+2. Model Loading
+    - The optimally tuned XGBoost model, trained with data from the fusion input, is loaded for prediction tasks.
+
+3. Making Predictions
+    - The model processes the input features to predict the likelihood of each diagnosis class. The final output is a tensor of dimensions (1, 5), representing the confidence in each class.
+
+4. Interpretation and Use
+    - The probabilities are used to determine the most likely diagnosis, aiding healthcare professionals in decision-making processes.
+
+
