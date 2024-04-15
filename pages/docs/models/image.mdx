@@ -2,6 +2,28 @@
 title: Image Model
 ---
 
+# Image Model
+
 EfficientNet distinguishes itself in medical imaging by balancing network depth, width, and resolution, enhancing its efficiency and accuracy in detecting rare diseases from chest X-rays. Trained on diverse datasets, it excels at identifying complex pathologies, making it crucial for early diagnosis. Integrated into a web application, it enables healthcare professionals to swiftly receive precise pathology predictions, markedly advancing patient care.
 
-# Image Model
+## Model Training 
+
+The model workflow can be summarized as follows:
+
+![example image](/images/efficientnet.png)
+
+## Data Preprocessing 
+
+In our project, we employ a comprehensive data preprocessing protocol to ensure the integrity and quality of the data used for analysis. This process involves several critical steps:
+
+### Image Resizing: 
+All images are uniformly resized to a resolution of 256x256 pixels. This standardization is crucial for maintaining consistency across our dataset, ensuring that all inputs into the machine learning model are of equal dimensions.
+
+### Data Augmentation: 
+To increase the robustness of our model against variations in new, unseen data, we implement an augmentation technique on our training set. This includes random rotations between 1 and 5 degrees. Augmentation helps our models generalize better by learning from a diversified set of images.
+
+### Dataset Balancing: 
+The training dataset undergoes a balancing process where samples are weighted to minimize bias towards any particular class. This is critical for training accurate and fair machine learning models, especially in medical diagnostics where certain conditions may be underrepresented.
+
+### Loader Transformation and Normalization: 
+Before feeding them into the neural network, images are converted into tensors and normalized using predefined mean and standard deviation values. This step ensures that the model receives inputs that are on a similar scale and improves the convergence behavior during training.
