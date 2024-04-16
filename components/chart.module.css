@@ -1,3 +1,7 @@
 .y-axis-label g[aria-label*="y-axis"] {
   @apply text-xs;
 }
+
+.y-axis-label g[aria-label*="y-axis"] text:nth-child(1) {
+  @apply font-bold;
+}
