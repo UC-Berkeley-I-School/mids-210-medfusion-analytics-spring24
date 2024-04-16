@@ -422,14 +422,15 @@ export function Demo() {
     />
   );
 
+  const preloadModels = () => {
+    runWorker({ type: 'preload', payload: {} });
+  };
+
   return (
     <>
       <Card className="w-auto">
         <CardHeader>
           <CardTitle>MedFusion Analytics Demo</CardTitle>
-          {/* <CardDescription>
-
-          </CardDescription> */}
           <div className="text-sm text-muted-foreground">
             Example patients:
             <div className="flex flex-wrap flex-row">
@@ -539,6 +540,9 @@ export function Demo() {
                 />
                 <div className="flex gap-2">
                   <Button type="submit">Run</Button>
+                  <Button type="button" className="hidden" variant="ghost" onClick={preloadModels}>
+                    Preload models
+                  </Button>
                 </div>
                 {customFormError && <Callout type="warning">{customFormError}</Callout>}
               </TooltipProvider>

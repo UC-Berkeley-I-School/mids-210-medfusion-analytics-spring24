@@ -45,6 +45,14 @@ class InferenceSessionSingleton {
   }
 }
 
+function preloadModels() {
+  console.log('Preloading models');
+  InferenceSessionSingleton.getInstance(NLP_MODEL_URL);
+  InferenceSessionSingleton.getInstance(IMAGE_MODEL_URL);
+  InferenceSessionSingleton.getInstance(TABULAR_MODEL_URL);
+  InferenceSessionSingleton.getInstance(FUSION_MODEL_URL);
+}
+
 function inverseLogit(x: number) {
   return 1 / (1 + Math.exp(-x));
 }
@@ -232,6 +240,9 @@ self.addEventListener('message', (event: MessageEvent<ModelWebWorkerSendMessage>
       break;
     case 'fusion':
       runFusionInference(payload);
+      break;
+    case 'preload':
+      preloadModels();
       break;
     default:
       break;
