@@ -73,6 +73,12 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
 
+      - uses: suisei-cn/actions-download-file@v1.6.0
+        name: Download the models
+        with:
+          url: https://github.com/UC-Berkeley-I-School/mids-210-medfusion-analytics-spring24/releases/download/v1.0.0/bioclinicalbert_nlp_cls_best_fp16.onnx
+          target: model/onnx/
+
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
 
