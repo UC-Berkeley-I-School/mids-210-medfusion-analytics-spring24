@@ -28,7 +28,7 @@ const Chart: React.FC<{ data: InferenceDatum[]; type: 'probability' | 'odds_rati
         tickFormat: (d: string) => categoryToName[d],
         tickSize: 0,
       },
-      marginLeft: 100,
+      marginLeft: 110,
       marginRight: 20,
       width: containerRef.current?.clientWidth,
       height: 225,
